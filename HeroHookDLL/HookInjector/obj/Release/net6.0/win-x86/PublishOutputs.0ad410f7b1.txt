@@ -1,0 +1,2 @@
+C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\bin\Release\net6.0\win-x86\publish\HookInjector.pdb
+C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\bin\Release\net6.0\win-x86\publish\HookInjector.exe
