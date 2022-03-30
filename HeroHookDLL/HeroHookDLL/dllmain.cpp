@@ -18,7 +18,6 @@
 #include <d3dx9.h>
 
 #pragma comment (lib, "libMinHook.x86.lib")
-
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
 
@@ -42,8 +41,10 @@ float z = 0;
 float _x = 0;
 float _y = 0;
 float _z = 0;
+float setHeight = 20;
 
 void getCoordinates() {
+
 	HANDLE ExeBaseAddress = GetModuleHandleA(0);
 	uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
 	uintptr_t ModuleBaseAdrs = (DWORD&)*p;
@@ -62,7 +63,24 @@ void getCoordinates() {
 
 
 	*coordinates = "X: " + std::to_string(x) + " Y: " + std::to_string(y) + " Z:" + std::to_string(z);
+
+
+
+
+
+	//std::cout << "X: " << std::to_string(x) << " Y: " << std::to_string(y) << " Z:" << std::to_string(z);
+
+
 }
+
+
+HRESULT __stdcall DetourBeginScene(IDirect3DDevice9* pDevice)
+{
+	pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	return pBeginScene(pDevice);
+
+}
+
 HRESULT __stdcall DetourEndScene(IDirect3DDevice9* pDevice)
 {
 	getCoordinates();
@@ -106,6 +124,10 @@ void InitMinHook() {
 		reinterpret_cast<void**>(&pEndScene)) != MH_OK)
 		throw std::runtime_error("Bruh");
 
+	if (MH_CreateHook(vTable[41],
+		&DetourBeginScene,
+		reinterpret_cast<void**>(&pBeginScene)) != MH_OK)
+		throw std::runtime_error("Bruh");
 }
 HMODULE newhModule;
 DWORD __stdcall DestroyConsole(LPVOID lpParameter) {
@@ -139,10 +161,19 @@ DWORD WINAPI MainMenu() {
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 	std::cout << "Bootleg DLL Injected Console" << std::endl;
+	printf("NOTE: CLOSING THE CONSOLE WITH THE X CLOSES THE GAME ... so dont unless you want to idk man you do you\n");
+
+	printf("CONTROLS:\n");
+	printf("The \| Key enables 'flight'\n");
+	printf("While flying page up and page down add or decrease height\n");
+	printf("Numpad 2 Toggles Hero mode\n");
+	printf("Numpad 5 Sets your location\n");
+	printf("Numpad 6 Teleports you to the set location\n");
+	printf("The DELETE key closes the hook\n");
 	InitMinHook();
 	while (1) {
 		Sleep(100);
-		if (GetAsyncKeyState(VK_NUMPAD0)) {
+		if (GetAsyncKeyState(VK_DELETE)) {
 			MH_DisableHook(MH_ALL_HOOKS);
 			break;
 		}
@@ -194,7 +225,7 @@ DWORD WINAPI MainMenu() {
 			Sleep(100); //No spam ... stop
 			TurnOnHeroMode();
 		}
-		if (GetAsyncKeyState(VK_SPACE)) {
+		if (GetAsyncKeyState(VK_OEM_5)) { //THe fuck
 			HANDLE ExeBaseAddress = GetModuleHandleA(0);
 			uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
 			uintptr_t ModuleBaseAdrs = (DWORD&)*p;
@@ -204,7 +235,15 @@ DWORD WINAPI MainMenu() {
 			float* z = (float*)ZCoord;
 
 			while (1) {
-				*z = 20;
+				*z = setHeight;
+				if (GetAsyncKeyState(VK_PRIOR)) {
+					Sleep(100);
+					setHeight += 1;
+				}
+				if (GetAsyncKeyState(VK_NEXT)) {
+					Sleep(100);
+					setHeight -= 1;
+				}
 				if (GetAsyncKeyState(VK_NUMPAD2))
 					break;
 			}
