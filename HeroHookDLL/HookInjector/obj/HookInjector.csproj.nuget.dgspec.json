@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\0za0\\source\\repos\\HeroHookDLL\\HookInjector\\HookInjector.csproj": {}
+    "D:\\Documents\\GitHub\\HeroHookDLL\\HeroHookDLL\\HookInjector\\HookInjector.csproj": {}
   },
   "projects": {
-    "C:\\Users\\0za0\\source\\repos\\HeroHookDLL\\HookInjector\\HookInjector.csproj": {
+    "D:\\Documents\\GitHub\\HeroHookDLL\\HeroHookDLL\\HookInjector\\HookInjector.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\0za0\\source\\repos\\HeroHookDLL\\HookInjector\\HookInjector.csproj",
+        "projectUniqueName": "D:\\Documents\\GitHub\\HeroHookDLL\\HeroHookDLL\\HookInjector\\HookInjector.csproj",
         "projectName": "HookInjector",
-        "projectPath": "C:\\Users\\0za0\\source\\repos\\HeroHookDLL\\HookInjector\\HookInjector.csproj",
+        "projectPath": "D:\\Documents\\GitHub\\HeroHookDLL\\HeroHookDLL\\HookInjector\\HookInjector.csproj",
         "packagesPath": "C:\\Users\\0za0\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\0za0\\source\\repos\\HeroHookDLL\\HookInjector\\obj\\",
+        "outputPath": "D:\\Documents\\GitHub\\HeroHookDLL\\HeroHookDLL\\HookInjector\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

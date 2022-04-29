@@ -43,6 +43,35 @@ float _y = 0;
 float _z = 0;
 float setHeight = 20;
 
+
+//AddCoordStuff
+float addX = 10.0;
+float addY = 10.0;
+float addZ = 10.0;
+
+void addToCoordinates(float x, float y, float z) 
+{
+	HANDLE ExeBaseAddress = GetModuleHandleA(0);
+	uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
+	uintptr_t ModuleBaseAdrs = (DWORD&)*p;
+
+	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
+	DWORD Val = (DWORD&)*ZCoord;
+	float* currentz = (float*)ZCoord;
+
+	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
+	Val = (DWORD&)*XCoord;
+	float* currentx = (float*)XCoord;
+
+	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
+	Val = (DWORD&)*YCoord;
+	float* currenty = (float*)YCoord;
+
+	*currentx += x;
+	*currenty += y;
+	*currentz += z;
+}
+
 void getCoordinates() {
 
 	HANDLE ExeBaseAddress = GetModuleHandleA(0);
@@ -64,19 +93,13 @@ void getCoordinates() {
 
 	*coordinates = "X: " + std::to_string(x) + " Y: " + std::to_string(y) + " Z:" + std::to_string(z);
 
-
-
-
-
 	//std::cout << "X: " << std::to_string(x) << " Y: " << std::to_string(y) << " Z:" << std::to_string(z);
-
-
 }
 
 
 HRESULT __stdcall DetourBeginScene(IDirect3DDevice9* pDevice)
 {
-	pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	return pBeginScene(pDevice);
 
 }
@@ -166,9 +189,9 @@ DWORD WINAPI MainMenu() {
 	printf("CONTROLS:\n");
 	printf("The \| Key enables 'flight'\n");
 	printf("While flying page up and page down add or decrease height\n");
-	printf("Numpad 2 Toggles Hero mode\n");
-	printf("Numpad 5 Sets your location\n");
-	printf("Numpad 6 Teleports you to the set location\n");
+	printf("Number 1 Toggles Hero mode\n");
+	printf("Number 2 Sets your location\n");
+	printf("Number 3 Teleports you to the set location\n");
 	printf("The DELETE key closes the hook\n");
 	InitMinHook();
 	while (1) {
@@ -189,7 +212,7 @@ DWORD WINAPI MainMenu() {
 				thing = false;
 			}
 		}
-		if (GetAsyncKeyState(VK_NUMPAD5))
+		if (GetAsyncKeyState(0x32))//2 key
 		{
 			getCoordinates();
 			printf("Set position\n");
@@ -198,7 +221,7 @@ DWORD WINAPI MainMenu() {
 			_z = z;
 
 		}
-		if (GetAsyncKeyState(VK_NUMPAD6))
+		if (GetAsyncKeyState(0x33))//3 key
 		{
 			HANDLE ExeBaseAddress = GetModuleHandleA(0);
 			uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
@@ -221,7 +244,7 @@ DWORD WINAPI MainMenu() {
 			*y = _y;
 			*z = _z;
 		}
-		if (GetAsyncKeyState(VK_NUMPAD2)) {
+		if (GetAsyncKeyState(0x31)) {
 			Sleep(100); //No spam ... stop
 			TurnOnHeroMode();
 		}
@@ -248,6 +271,23 @@ DWORD WINAPI MainMenu() {
 					break;
 			}
 		}
+
+		//Movement stuff
+		if (GetAsyncKeyState(VK_NUMPAD8))
+			addToCoordinates(0, addY, 0);
+		
+		if (GetAsyncKeyState(VK_NUMPAD2))
+			addToCoordinates(0, -addY, 0);
+		
+		if (GetAsyncKeyState(VK_NUMPAD4))
+			addToCoordinates(-addX, 0, 0);
+
+		if (GetAsyncKeyState(VK_NUMPAD6))
+			addToCoordinates(addX, 0, 0);
+
+		if (GetAsyncKeyState(VK_NUMPAD5))
+			addToCoordinates(0, 0, addZ);
+		
 
 	}
 	fclose(fp);
