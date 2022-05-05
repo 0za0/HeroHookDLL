@@ -1,9 +1,9 @@
 ﻿  dllmain.cpp
-D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\HeroHookDLL\dllmain.cpp(190,9): warning C4129: '|': unrecognized character escape sequence
+D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\HeroHookDLL\dllmain.cpp(216,9): warning C4129: '|': unrecognized character escape sequence
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  15 of 169 functions ( 8.9%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+  2 of 170 functions ( 1.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   HeroHookDLL.vcxproj -> D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\Release\HeroHookDLL.dll

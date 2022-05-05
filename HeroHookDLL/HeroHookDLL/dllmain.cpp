@@ -33,6 +33,7 @@ beginScene pBeginScene; //Original Pointer
 LPD3DXFONT font;
 std::string* coordinates = new std::string();
 bool thing = false;
+bool isFlying = false;
 
 float x = 0;
 float y = 0;
@@ -96,7 +97,32 @@ void getCoordinates() {
 	//std::cout << "X: " << std::to_string(x) << " Y: " << std::to_string(y) << " Z:" << std::to_string(z);
 }
 
+DWORD __stdcall Fly() {
 
+	HANDLE ExeBaseAddress = GetModuleHandleA(0);
+	uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
+	uintptr_t ModuleBaseAdrs = (DWORD&)*p;
+
+	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
+	DWORD Val = (DWORD&)*ZCoord;
+	float* z = (float*)ZCoord;
+
+	while (1) {
+		
+		*z = setHeight;
+		if (GetAsyncKeyState(VK_PRIOR)) {
+			Sleep(100);
+			setHeight += 1;
+		}
+		if (GetAsyncKeyState(VK_NEXT)) {
+			Sleep(100);
+			setHeight -= 1;
+		}
+		if (GetAsyncKeyState(VK_BACK))
+			break;
+	}
+	return 0;
+}
 HRESULT __stdcall DetourBeginScene(IDirect3DDevice9* pDevice)
 {
 	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
@@ -192,7 +218,9 @@ DWORD WINAPI MainMenu() {
 	printf("Number 1 Toggles Hero mode\n");
 	printf("Number 2 Sets your location\n");
 	printf("Number 3 Teleports you to the set location\n");
-	printf("The DELETE key closes the hook\n");
+	printf("\n\nShort Range Teleport Keybinds\n\n");
+	printf("\t8 Forward\n4 Left\t5  Jump   6 Right\n\t2 Backward");
+	printf("\n\n\nThe DELETE key unhooks the dll without closing the game!!\n");
 	InitMinHook();
 	while (1) {
 		Sleep(100);
@@ -249,27 +277,7 @@ DWORD WINAPI MainMenu() {
 			TurnOnHeroMode();
 		}
 		if (GetAsyncKeyState(VK_OEM_5)) { //THe fuck
-			HANDLE ExeBaseAddress = GetModuleHandleA(0);
-			uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
-			uintptr_t ModuleBaseAdrs = (DWORD&)*p;
-
-			uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
-			DWORD Val = (DWORD&)*ZCoord;
-			float* z = (float*)ZCoord;
-
-			while (1) {
-				*z = setHeight;
-				if (GetAsyncKeyState(VK_PRIOR)) {
-					Sleep(100);
-					setHeight += 1;
-				}
-				if (GetAsyncKeyState(VK_NEXT)) {
-					Sleep(100);
-					setHeight -= 1;
-				}
-				if (GetAsyncKeyState(VK_NUMPAD2))
-					break;
-			}
+			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Fly, 0, 0, 0);//
 		}
 
 		//Movement stuff
