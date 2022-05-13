@@ -18,13 +18,14 @@ float positionCodeY = 0;
 float positionCodeZ = 0;
 float setHeight = 20;
 
-uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
-uintptr_t ModuleBaseAdrs = (DWORD&)*coordinateBasePointer;
-uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
-uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
-uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
+
 
 void getCoordinates() {
+	uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
+	uintptr_t ModuleBaseAdrs = (DWORD&)*coordinateBasePointer;
+	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
+	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
+	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	DWORD Val = (DWORD&)*ZCoord;
 	z = *(float*)ZCoord;
 
@@ -37,14 +38,19 @@ void getCoordinates() {
 }
 
 void addToCoordinates(float x, float y, float z) {
+	uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
+	uintptr_t ModuleBaseAdrs = (DWORD&)*coordinateBasePointer;
+	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
+	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
+	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	DWORD Val = (DWORD&)*ZCoord;
 	float* currentz = (float*)ZCoord;
 
-	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
+	//uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
 	Val = (DWORD&)*XCoord;
 	float* currentx = (float*)XCoord;
 
-	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
+	//uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	Val = (DWORD&)*YCoord;
 	float* currenty = (float*)YCoord;
 
@@ -88,14 +94,19 @@ DWORD __stdcall Fly() {
 
 
 void GetPositionCode() {
+	uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
+	uintptr_t ModuleBaseAdrs = (DWORD&)*coordinateBasePointer;
+	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
+	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
+	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	DWORD Val = (DWORD&)*ZCoord;
 	float* z = (float*)ZCoord;
 
-	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
+	//uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
 	Val = (DWORD&)*XCoord;
 	float* x = (float*)XCoord;
 
-	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
+	//uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	Val = (DWORD&)*YCoord;
 	float* y = (float*)YCoord;
 

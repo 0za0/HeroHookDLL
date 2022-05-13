@@ -7,8 +7,15 @@
 #include <MinHook.h>
 
 extern LPD3DXFONT font;
+
+extern bool coordinateToggleOn;
 //EndScene Hook
 
+typedef HRESULT(__stdcall* endScene)(IDirect3DDevice9* pDevice);
+typedef HRESULT(__stdcall* beginScene)(IDirect3DDevice9* pDevice);
+
+
+extern endScene pEndScene; //Original Pointer
 
 
 //DetourFunction

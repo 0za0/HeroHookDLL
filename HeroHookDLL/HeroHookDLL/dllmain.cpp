@@ -39,9 +39,8 @@ DWORD WINAPI MainMenu() {
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 	//freopen_s(&fp, "CONIN$", "r", stdin); Not yet
-	std::cout << "Bootleg DLL Injected Console" << std::endl;
+	printf("Bootleg DLL Injected Console");
 	printf("NOTE: CLOSING THE CONSOLE WITH THE X CLOSES THE GAME ... so dont unless you want to idk man you do you\n");
-
 	printf("CONTROLS:\n");
 	printf("The \| Key enables 'flight'\n");
 	printf("While flying page up and page down add or decrease height\n");
@@ -51,8 +50,8 @@ DWORD WINAPI MainMenu() {
 	printf("\n\nShort Range Teleport Keybinds\n\n");
 	printf("\t8 Forward\n4 Left\t5  Jump   6 Right\n\t2 Backward");
 	printf("\n\n\nThe DELETE key unhooks the dll without closing the game!!\n");
-
 	InitMinHook();
+
 	while (1) {
 		Sleep(100);
 		if (GetAsyncKeyState(VK_DELETE)) {
@@ -62,14 +61,14 @@ DWORD WINAPI MainMenu() {
 		}
 		if (GetAsyncKeyState(VK_NUMPAD1)) {
 			Sleep(100);
-			if (!coordinateToggle) {
-				if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
-					CreateThread(0, 0, DestroyConsole, 0, 0, 0);
-				coordinateToggle = true;
+			if (!coordinateToggleOn) {
+				//if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
+				//CreateThread(0, 0, DestroyConsole, 0, 0, 0);
+				coordinateToggleOn = true;
 			}
 			else {
-				MH_DisableHook(MH_ALL_HOOKS);
-				coordinateToggle = false;
+				//MH_DisableHook(MH_ALL_HOOKS);
+				coordinateToggleOn = false;
 			}
 		}
 		if (GetAsyncKeyState(0x32))//2 key
