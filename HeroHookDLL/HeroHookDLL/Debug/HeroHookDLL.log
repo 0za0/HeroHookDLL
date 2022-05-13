@@ -1,2 +1,5 @@
-﻿  dllmain.cpp
-  HeroHookDLL.vcxproj -> C:\Users\0za0\source\repos\HeroHookDLL\Debug\HeroHookDLL.dll
+﻿  pch.cpp
+  dllmain.cpp
+D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\HeroHookDLL\dllmain.cpp(216,9): warning C4129: '|': unrecognized character escape sequence
+LINK : warning LNK4098: defaultlib 'LIBCMTD' conflicts with use of other libs; use /NODEFAULTLIB:library
+  HeroHookDLL.vcxproj -> D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\Debug\HeroHookDLL.dll

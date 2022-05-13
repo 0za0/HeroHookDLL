@@ -1,0 +1,13 @@
+﻿  pch.cpp
+  dllmain.cpp
+D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\HeroHookDLL\dllmain.cpp(216,9): warning C4129: '|': unrecognized character escape sequence
+dllmain.obj : error LNK2019: unresolved external symbol MH_Initialize referenced in function "void __cdecl InitMinHook(void)" (?InitMinHook@@YAXXZ)
+dllmain.obj : error LNK2019: unresolved external symbol MH_CreateHook referenced in function "void __cdecl InitMinHook(void)" (?InitMinHook@@YAXXZ)
+dllmain.obj : error LNK2019: unresolved external symbol MH_EnableHook referenced in function "unsigned long __cdecl MainMenu(void)" (?MainMenu@@YAKXZ)
+dllmain.obj : error LNK2019: unresolved external symbol MH_DisableHook referenced in function "unsigned long __cdecl MainMenu(void)" (?MainMenu@@YAKXZ)
+dllmain.obj : error LNK2019: unresolved external symbol Direct3DCreate9 referenced in function "void __cdecl InitMinHook(void)" (?InitMinHook@@YAXXZ)
+dllmain.obj : error LNK2019: unresolved external symbol D3DXCreateFontA referenced in function "long __cdecl DetourEndScene(struct IDirect3DDevice9 *)" (?DetourEndScene@@YAJPEAUIDirect3DDevice9@@@Z)
+D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\lib\Debug\libMinHook.x86.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3d9.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3dx9.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\x64\Debug\HeroHookDLL.dll : fatal error LNK1120: 6 unresolved externals
