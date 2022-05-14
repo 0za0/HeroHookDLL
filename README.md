@@ -7,6 +7,12 @@ A DLL Hook for Bionicle Heroes.
 
 This should act as a speedrun practice helper. 
 
+# Bugs & Feature Requests
+Feel free to hit me up on Discord. kansokusha#3132
+
+# Known Bugs
+- Coordinate Display causes crash when entering level (Toggle off before exiting or entering level)
+
 
 # Downloads
 Head over to the Releases Page for the latest release
