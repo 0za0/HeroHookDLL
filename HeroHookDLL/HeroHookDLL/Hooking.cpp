@@ -63,13 +63,13 @@ HRESULT __stdcall DetourEndScene(IDirect3DDevice9* pDevice)
 {
 	int padding = 2;
 	int rectx1 = 50, rectx2 = 270, recty1 = 250, recty2 = 300;
-	//D3DRECT rectangle = { rectx1, recty1, rectx2, recty2 };
-	//pDevice->Clear(1, &rectangle, D3DCLEAR_TARGET, D3DCOLOR_ARGB(255, 0, 0, 0), 0.0f, 0); // this draws a rectangle
-	//if (!font)
-	//	D3DXCreateFont(pDevice, 32, 0, FW_BOLD, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
-	//RECT textRectangle;
-	//SetRect(&textRectangle, rectx1 + padding, recty1 + padding, rectx2 - padding, recty2 - padding);
-	//font->DrawText(0, "DLL ENABLED", -1, &textRectangle, DT_NOCLIP | DT_LEFT, D3DCOLOR_ARGB(255, 255, 0, 0));
+	D3DRECT rectangle = { rectx1, recty1, rectx2, recty2 };
+	pDevice->Clear(1, &rectangle, D3DCLEAR_TARGET, D3DCOLOR_ARGB(255, 0, 0, 0), 0.0f, 0); // this draws a rectangle
+	if (!font)
+		D3DXCreateFont(pDevice, 32, 0, FW_BOLD, 1, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial", &font);
+	RECT textRectangle;
+	SetRect(&textRectangle, rectx1 + padding, recty1 + padding, rectx2 - padding, recty2 - padding);
+	font->DrawText(0, "DLL ENABLED", -1, &textRectangle, DT_NOCLIP | DT_LEFT, D3DCOLOR_ARGB(255, 255, 0, 0));
 
 	if (coordinateToggleOn) {
 		getCoordinates();
