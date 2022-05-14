@@ -1,7 +1,0 @@
-﻿dllmain.obj : error LNK2001: unresolved external symbol MH_Initialize
-dllmain.obj : error LNK2001: unresolved external symbol MH_CreateHook
-dllmain.obj : error LNK2001: unresolved external symbol Direct3DCreate9
-dllmain.obj : error LNK2001: unresolved external symbol D3DXCreateFontA
-dllmain.obj : error LNK2001: unresolved external symbol MH_EnableHook
-dllmain.obj : error LNK2001: unresolved external symbol MH_DisableHook
-D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\x64\Release\HeroHookDLL.dll : fatal error LNK1120: 6 unresolved externals

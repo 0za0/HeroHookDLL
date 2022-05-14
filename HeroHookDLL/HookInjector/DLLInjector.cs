@@ -10,10 +10,10 @@ namespace HookInjector
 {
     public enum DllInjectionResult
     {
-        DllNotFound,
-        GameProcessNotFound,
+        DllNotFoundLmfao,
+        ProcessNotFound,
         InjectionFailed,
-        Success
+        InjectionSuccess
     }
 
     public sealed class DllInjector
@@ -42,91 +42,52 @@ namespace HookInjector
         static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttribute, IntPtr dwStackSize, IntPtr lpStartAddress,
             IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
 
-        static DllInjector _instance;
+       
 
-        public static DllInjector GetInstance
+        public static DllInjectionResult Inject(string gameName, string path)
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new DllInjector();
-                }
-                return _instance;
-            }
-        }
+            if (!File.Exists(path))
+                return DllInjectionResult.DllNotFoundLmfao;
 
-        DllInjector() { }
 
-        public DllInjectionResult Inject(string sProcName, string sDllPath)
-        {
-            if (!File.Exists(sDllPath))
-            {
-                return DllInjectionResult.DllNotFound;
-            }
+            Process proc = Process.GetProcesses().First(x => x.ProcessName == gameName);
+            uint processID = (uint)proc.Id;
 
-            uint _procId = 0;
-
-            Process[] _procs = Process.GetProcesses();
-            for (int i = 0; i < _procs.Length; i++)
-            {
-                if (_procs[i].ProcessName == sProcName)
-                {
-                    _procId = (uint)_procs[i].Id;
-                    break;
-                }
-            }
-
-            if (_procId == 0)
-            {
-                return DllInjectionResult.GameProcessNotFound;
-            }
-
-            if (!bInject(_procId, sDllPath))
-            {
+            if (processID == 0)
+                return DllInjectionResult.ProcessNotFound;
+            if (!bInject(processID, path))
                 return DllInjectionResult.InjectionFailed;
-            }
 
-            return DllInjectionResult.Success;
+            return DllInjectionResult.InjectionSuccess;
         }
-
-        bool bInject(uint pToBeInjected, string sDllPath)
+        const int PROCESS_CREATE_THREAD = 0x0002;
+        const int PROCESS_QUERY_INFORMATION = 0x0400;
+        const int PROCESS_VM_OPERATION = 0x0008;
+        const int PROCESS_VM_WRITE = 0x0020;
+        const int PROCESS_VM_READ = 0x0010;
+        static bool bInject(uint processID, string dllPath)
         {
-            IntPtr hndProc = OpenProcess((0x2 | 0x8 | 0x10 | 0x20 | 0x400), 1, pToBeInjected);
-
+            IntPtr hndProc = OpenProcess((PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_QUERY_INFORMATION), 1, processID);
             if (hndProc == INTPTR_ZERO)
-            {
                 return false;
-            }
 
             IntPtr lpLLAddress = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
-
             if (lpLLAddress == INTPTR_ZERO)
-            {
                 return false;
-            }
 
-            IntPtr lpAddress = VirtualAllocEx(hndProc, (IntPtr)null, (IntPtr)sDllPath.Length, (0x1000 | 0x2000), 0X40);
-
+            IntPtr lpAddress = VirtualAllocEx(hndProc, (IntPtr)null, (IntPtr)dllPath.Length, (0x1000 | 0x2000), 0X40);
             if (lpAddress == INTPTR_ZERO)
-            {
                 return false;
-            }
 
-            byte[] bytes = Encoding.ASCII.GetBytes(sDllPath);
-
+            byte[] bytes = Encoding.ASCII.GetBytes(dllPath);
             if (WriteProcessMemory(hndProc, lpAddress, bytes, (uint)bytes.Length, 0) == 0)
-            {
                 return false;
-            }
 
             if (CreateRemoteThread(hndProc, (IntPtr)null, INTPTR_ZERO, lpLLAddress, lpAddress, 0, (IntPtr)null) == INTPTR_ZERO)
-            {
                 return false;
-            }
+
 
             CloseHandle(hndProc);
-
             return true;
         }
     }

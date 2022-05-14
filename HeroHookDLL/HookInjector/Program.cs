@@ -1,5 +1,17 @@
 ﻿using HookInjector;
-DllInjectionResult res = DllInjector.GetInstance.Inject("Bionicle", @$"D:\Documents\GitHub\HeroHookDLL\HeroHookDLL\Release\HeroHookDLL.dll");
+string thing = @"██╗  ██╗███████╗██████╗  ██████╗     ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗    ██╗███╗   ██╗     ██╗███████╗ ██████╗████████╗ ██████╗ ██████╗ 
+██║  ██║██╔════╝██╔══██╗██╔═══██╗    ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝    ██║████╗  ██║     ██║██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗
+███████║█████╗  ██████╔╝██║   ██║    ███████║██║   ██║██║   ██║█████╔╝     ██║██╔██╗ ██║     ██║█████╗  ██║        ██║   ██║   ██║██████╔╝
+██╔══██║██╔══╝  ██╔══██╗██║   ██║    ██╔══██║██║   ██║██║   ██║██╔═██╗     ██║██║╚██╗██║██   ██║██╔══╝  ██║        ██║   ██║   ██║██╔══██╗
+██║  ██║███████╗██║  ██║╚██████╔╝    ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗    ██║██║ ╚████║╚█████╔╝███████╗╚██████╗   ██║   ╚██████╔╝██║  ██║
+╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝    ╚═╝╚═╝  ╚═══╝ ╚════╝ ╚══════╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+                                                        By Nullpo
+                                            Design based on evolution536's 
+
+";
+Console.WindowWidth = 160;
+Console.WriteLine(thing);
+DllInjectionResult a = DllInjector.Inject("Bionicle", @$"{Directory.GetCurrentDirectory()}\HeroHookDLL.dll"); 
 Console.WriteLine(@$"{Directory.GetCurrentDirectory()}\HeroHookDLL.dll");
-Console.WriteLine($"Injection Result {res}");
+Console.WriteLine($"Injection Result {a.ToString()}");
 Console.ReadKey();

@@ -1,5 +1,0 @@
-C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\obj\Release\net5.0\win-x86\HookInjector.csproj.AssemblyReference.cache
-C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\obj\Release\net5.0\win-x86\HookInjector.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\obj\Release\net5.0\win-x86\HookInjector.AssemblyInfoInputs.cache
-C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\obj\Release\net5.0\win-x86\HookInjector.AssemblyInfo.cs
-C:\Users\0za0\source\repos\HeroHookDLL\HookInjector\obj\Release\net5.0\win-x86\HookInjector.csproj.CoreCompileInputs.cache
