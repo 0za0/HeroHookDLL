@@ -18,7 +18,7 @@ Feel free to hit me up on Discord. kansokusha#3132
 
 
 # Downloads
-Head over to the Releases Page for the latest release
+Head over to the [Releases](https://github.com/0za0/HeroHookDLL/releases/tag/V0.1H) page for the latest release
 
 # Todo
 - Fix that it gets flagged as a virus
