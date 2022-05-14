@@ -7,11 +7,14 @@ A DLL Hook for Bionicle Heroes.
 
 This should act as a speedrun practice helper. 
 
+# Known Bugs
+- Coordinate Display causes crash when entering level (Toggle off before exiting or entering level)
+- Injector gets flagged as a virus because it manipulated memory (aka. its injecting a DLL)
+
 # Bugs & Feature Requests
 Feel free to hit me up on Discord. kansokusha#3132
 
-# Known Bugs
-- Coordinate Display causes crash when entering level (Toggle off before exiting or entering level)
+
 
 
 # Downloads
