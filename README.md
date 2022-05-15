@@ -8,7 +8,7 @@ A DLL Hook for Bionicle Heroes.
 This should act as a speedrun practice helper. 
 
 # TODOs 
-- Make keys remappable, seeing as a lot of features are on the numpad only
+- Make keys remappable, seeing as a lot of features are on the numpad only (Working on it)
 
 
 # Known Bugs
