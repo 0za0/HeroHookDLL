@@ -58,6 +58,7 @@ HRESULT __stdcall DetourBeginScene(IDirect3DDevice9* pDevice)
 {
 	return pBeginScene(pDevice);
 }
+
 bool coordinateToggleOn = false;
 HRESULT __stdcall DetourEndScene(IDirect3DDevice9* pDevice)
 {

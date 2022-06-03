@@ -62,8 +62,6 @@ DWORD WINAPI MainMenu() {
 		if (GetAsyncKeyState(VK_NUMPAD1)) {
 			Sleep(100);
 			if (!coordinateToggleOn) {
-				//if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
-				//CreateThread(0, 0, DestroyConsole, 0, 0, 0);
 				coordinateToggleOn = true;
 			}
 			else {
@@ -83,7 +81,8 @@ DWORD WINAPI MainMenu() {
 			Sleep(100); //No spam ... stop
 			TurnOnHeroMode();
 		}
-		if (GetAsyncKeyState(VK_OEM_5)) { //THe fuck
+		if (GetAsyncKeyState(VK_OEM_5)) { //The fuck
+			DisableGravity();
 			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Fly, 0, 0, 0);//
 		}
 
