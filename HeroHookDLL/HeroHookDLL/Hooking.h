@@ -1,28 +1,22 @@
 #pragma once
-#ifndef HOOKING_H
-#define HOOKING_H
+#include "GUI.h"
 
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <MinHook.h>
+namespace Hooking
+{
+	void Init();
+	void Destroy() noexcept;
 
-extern LPD3DXFONT font;
+	constexpr void* VFunc(void* thisptr, size_t index) noexcept
+	{
+		return (*static_cast<void***>(thisptr))[index];
+	}
 
-extern bool coordinateToggleOn;
-//EndScene Hook
+	//newer way of typedefs apparently
+	using EndSceneFunc = long(__thiscall*)(void*, IDirect3DDevice9*) noexcept;
+	inline EndSceneFunc EndSceneOriginal = nullptr;
+	long __stdcall EndScene(IDirect3DDevice9* device) noexcept;
 
-typedef HRESULT(__stdcall* endScene)(IDirect3DDevice9* pDevice);
-typedef HRESULT(__stdcall* beginScene)(IDirect3DDevice9* pDevice);
-
-
-extern endScene pEndScene; //Original Pointer
-
-
-//DetourFunction
-extern HRESULT __stdcall DetourEndScene(IDirect3DDevice9* pDevice);
-extern HRESULT __stdcall DetourBeginScene(IDirect3DDevice9* pDevice);
-
-
-//MinHook Init
-void InitMinHook();
-#endif
+	using ResetFunc = HRESULT(__thiscall*)(void*, IDirect3DDevice9*, D3DPRESENT_PARAMETERS*) noexcept;
+	inline ResetFunc ResetOriginal = nullptr; 
+	HRESULT __stdcall Reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept;
+}

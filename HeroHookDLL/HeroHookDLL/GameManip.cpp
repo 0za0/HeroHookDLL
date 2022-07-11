@@ -38,6 +38,7 @@ void getCoordinates() {
 	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
 	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
 	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
+
 	z = *(float*)ZCoord;
 	x = *(float*)XCoord;
 	y = *(float*)YCoord;
@@ -89,36 +90,6 @@ void EnableGravity() {
 }
 
 void DisableGravity() {
-	//*(uint8_t*) p1 = (uint8_t*)((uint8_t)ExeBaseAddress + 0xABF6F);
-	//uintptr_t* p2 = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0xABE45);
-	//uintptr_t g1 = (DWORD&)*p1;
-	//uintptr_t g2 = (DWORD&)*p2;
-	//unsigned long long* gravityOne = (unsigned long long*)g1;
-	//unsigned long long* gravityTwo = (unsigned long long*)g2;
-	//BYTE NewBytes[] = { 0x90 };
-	//*((BYTE*)((0x00400000 + 0xABF6F) + 2)) = NewBytes[0];
-	////printf("%llx\n",*ReadInProcessByte(0x00400000 + 0xABF6F));
-	//printf("%02X\n", *((BYTE*)((0x00400000 + 0xABF6F) + 0)));
-	//printf("%02X\n", *((BYTE*)((0x00400000 + 0xABF6F) + 1)));
-	//printf("%02X\n", *((BYTE*)((0x00400000 + 0xABF6F) + 2)));
-	//printf("%02X\n", *((BYTE*)((0x00400000 + 0xABF6F) + 3)));
-	//setByte(ReadInProcessByte(0x00400000 + 0xABF6F),0x90,2);
-	//*gravityOne = 0x448B909090909090;
-	//*gravityTwo = 0x8E8B909090909090;
-	// 
-	// 
-	// 
-	//WriteInProcessByte(0x004ABF6F, 0x448B909090909090);
-	//WriteInProcessByte(0x004ABE45, 0x8E8B909090909090);
-	//uint8_t pp = (uint8_t)0x004ABF6F;
-	/**((BYTE*)((0x00400000 + 0xABF6F) + 0)) = 0x90;
-	*((BYTE*)((0x00400000 + 0xABF6F) + 1)) = 0x90;
-	*((BYTE*)((0x00400000 + 0xABF6F) + 2)) = 0x90;
-	*((BYTE*)((0x00400000 + 0xABF6F) + 3)) = 0x90;
-	*((BYTE*)((0x00400000 + 0xABF6F) + 4)) = 0x90;
-	*((BYTE*)((0x00400000 + 0xABF6F) + 5)) = 0x90;*/
-	//Memory::Nop()
-
 
 	//Gravity Enabled
 //448B000000F49ED9
@@ -135,24 +106,6 @@ void DisableGravity() {
 	memset((void*)(0x004ABE45), 0x90, 6);
 	VirtualProtect((void*)0x004ABE45, 6, dwProtectt[0], &dwProtectt[1]);
 
-
-
-	/*int count = 8;
-	{ do {
-		printf("%02X\n", &pp);
-		if (count != 8 || count != 7)
-			*(uint8_t*)pp++ = 0x90;
-	} while (--count != 0); }*/
-
-	//printf("%02X\n", *((BYTE*)((0x00400000 + 0xABF6F) + 5)));
-	//printf("%02X\n", *((BYTE*)((0x00400000 + 0xABF6F) + 6)));
-
-	//*((BYTE*)((0x00400000 + 0xABE45) + 0)) = 0x90;
-	//*((BYTE*)((0x00400000 + 0xABE45) + 1)) = 0x90;
-	//*((BYTE*)((0x00400000 + 0xABE45) + 2)) = 0x90;
-	//*((BYTE*)((0x00400000 + 0xABE45) + 3)) = 0x90;
-	//*((BYTE*)((0x00400000 + 0xABE45) + 4)) = 0x90;
-	//*((BYTE*)((0x00400000 + 0xABE45) + 5)) = 0x90;
 	//printf("Trying to run the function");
 	//typedef void __cdecl func(int a);
 	////func* f = (func*)(0x004FF8CF);
