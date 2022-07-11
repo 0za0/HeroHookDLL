@@ -862,13 +862,13 @@ extern "C" __declspec(dllexport) __declspec(naked) void __stdcall RADTimerRead()
 }
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
+	DisableThreadLibraryCalls(hModule);
+
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
 
-		newhModule = hModule;
-		DWORD dwThreadId, dwThrdParam = 1;
-		HANDLE hThread;
-		hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainMenu, &dwThrdParam, 0, &dwThreadId);
+		
+		 CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainMenu, hModule, 0, nullptr);
 	}
 	if (ul_reason_for_call == DLL_PROCESS_DETACH)
 	{

@@ -34,7 +34,13 @@ void Hooking::Destroy() noexcept
 
 long __stdcall Hooking::EndScene(IDirect3DDevice9* device) noexcept 
 {
+	static const auto returnAddress = _ReturnAddress();
+
 	const auto result = EndSceneOriginal(device, device);
+
+	if (_ReturnAddress() == returnAddress)
+		return result; 
+
 	if (!GUI::isInitialized)
 		GUI::InitMenu(device);
 

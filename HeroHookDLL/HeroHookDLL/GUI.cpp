@@ -5,6 +5,7 @@
 #include "../imGUI/imgui.h"
 #include "../imGUI/imgui_impl_win32.h"
 #include "../imGUI/imgui_impl_dx9.h"
+#include "roboto.cpp"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -120,8 +121,10 @@ void GUI::Initialize()
 	DestroyWindowClass();
 }
 
+
 void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 {
+
 	auto params = D3DDEVICE_CREATION_PARAMETERS{  };
 	device->GetCreationParameters(&params);
 
@@ -137,7 +140,11 @@ void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
 	ImGui_ImplWin32_EnableDpiAwareness();
+
 	isInitialized = true;
+
+	ImGuiIO& io = ImGui::GetIO();
+	GUI::font = io.Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 25);
 }
 void GUI::Destroy() noexcept
 {
@@ -153,16 +160,33 @@ void GUI::Destroy() noexcept
 //Draws/Renders the menu
 void GUI::Draw() noexcept
 {
+
+	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::GetIO().MouseDrawCursor = true;
+	io.MouseDrawCursor = true;
+
+	//Quickly Hacked-In Button bs
+	if (GetAsyncKeyState(VK_LBUTTON))
+		io.AddMouseButtonEvent(0, true);
+	else
+		io.AddMouseButtonEvent(0, false);
+
+	ImGui::PushFont(GUI::font);
+	ImGui::ShowDemoWindow(&showMenu);
+	ImGui::PopFont();
+	ImGui::PushFont(GUI::font);
+
 	ImGui::Begin("Main Menu", &showMenu);
 	ImGui::Text("This is a big test to figure out whats wrong with this thing");
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Button("Button");
+	ImGui::PopFont();
+
 	ImGui::End();
-	
+
 
 
 	ImGui::EndFrame();
@@ -174,9 +198,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	if (GetAsyncKeyState(VK_F12) & 1)
 		GUI::showMenu = !GUI::showMenu;
-
+	ImGuiIO& io = ImGui::GetIO();
 	//Pass to imGUI
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) &&  GUI::showMenu )
+	if (io.WantCaptureMouse && ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) && GUI::showMenu)
 	{
 		return 1L;
 	}
