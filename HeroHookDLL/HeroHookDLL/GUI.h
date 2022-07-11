@@ -1,12 +1,14 @@
 #pragma once
 #include <d3d9.h>
 #include "../imGUI/imgui.h"
+
+
 namespace GUI
 {
 	//GUI Stuff
 	inline ImFont* font;
 
-	inline bool showMenu = true;
+	inline bool showMenu = false;
 	inline bool isInitialized = false;
 	inline HWND window = nullptr;
 	inline WNDCLASSEX windowClass = {  };

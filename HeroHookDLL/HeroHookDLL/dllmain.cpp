@@ -179,7 +179,7 @@ DWORD WINAPI MainMenu(LPVOID lpParam)
 		GUI::Destroy();
 	}
 	//BinkW Stuff
-	
+
 	//OpenLogFile();
 	//AllocConsole();
 	//FILE* fp;
@@ -198,7 +198,7 @@ DWORD WINAPI MainMenu(LPVOID lpParam)
 	//printf("\n\n\nThe DELETE key unhooks the dll without closing the game!!\n");
 	//InitMinHook();
 
-	
+
 
 
 	//while (1) {
@@ -257,7 +257,7 @@ DWORD WINAPI MainMenu(LPVOID lpParam)
 	// Close the thing
 	//CreateThread(0, 0, DestroyConsole, 0, 0, 0);
 
-	
+
 
 	return 0;
 
@@ -867,8 +867,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
 
-		
-		 CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainMenu, hModule, 0, nullptr);
+		Hooking::InitInputHook(hModule);
+		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainMenu, hModule, 0, nullptr);
 	}
 	if (ul_reason_for_call == DLL_PROCESS_DETACH)
 	{

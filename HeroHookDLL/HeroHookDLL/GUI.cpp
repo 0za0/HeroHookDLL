@@ -168,11 +168,7 @@ void GUI::Draw() noexcept
 
 	io.MouseDrawCursor = true;
 
-	//Quickly Hacked-In Button bs
-	if (GetAsyncKeyState(VK_LBUTTON))
-		io.AddMouseButtonEvent(0, true);
-	else
-		io.AddMouseButtonEvent(0, false);
+
 
 	ImGui::PushFont(GUI::font);
 	ImGui::ShowDemoWindow(&showMenu);
