@@ -9,7 +9,7 @@
 extern HANDLE ExeBaseAddress;
 extern std::string* coordinates;
 
-void TurnOnHeroMode();
+std::string TurnOnHeroMode();
 void addToCoordinates(float x, float y, float z);
 void getCoordinates();
 DWORD __stdcall Fly();

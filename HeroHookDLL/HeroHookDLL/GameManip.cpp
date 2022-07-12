@@ -175,7 +175,7 @@ void GetPositionCode() {
 	*z = positionCodeZ;
 }
 
-void TurnOnHeroMode() {
+std::string TurnOnHeroMode() {
 	uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x29B1BC);
 	uintptr_t ModuleBaseAdrs = (DWORD&)*p;
 
@@ -185,10 +185,10 @@ void TurnOnHeroMode() {
 
 	if (*z == 1) {
 		*z = 0;
-		printf("Hero Mode Toggle OFF!\n");
+		return "Hero Mode Toggle OFF!";
 	}
 	else {
 		*z = 1;
-		printf("Hero Mode Toggle ON!\n");
+		return "Hero Mode Toggle ON!";
 	}
 }

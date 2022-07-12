@@ -191,6 +191,7 @@
     <ClCompile Include="..\imGUI\imgui_impl_win32.cpp" />
     <ClCompile Include="..\imGUI\imgui_tables.cpp" />
     <ClCompile Include="..\imGUI\imgui_widgets.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GameManip.cpp" />
     <ClCompile Include="GUI.cpp" />

@@ -5,10 +5,11 @@
 
 namespace GUI
 {
+
 	//GUI Stuff
 	inline ImFont* font;
 
-	inline bool showMenu = false;
+	inline bool showMenu = true;
 	inline bool isInitialized = false;
 	inline HWND window = nullptr;
 	inline WNDCLASSEX windowClass = {  };
@@ -27,7 +28,7 @@ namespace GUI
 	//DirectX Stuff
 	bool InitDx() noexcept;
 	void DestroyDx() noexcept; 
-
+	void LogToConsole(const char* input) noexcept;
 	void Initialize();
 
 	void InitMenu(LPDIRECT3DDEVICE9 device) noexcept;

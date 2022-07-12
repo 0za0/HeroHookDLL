@@ -6,6 +6,11 @@
 #include "../imGUI/imgui_impl_win32.h"
 #include "../imGUI/imgui_impl_dx9.h"
 #include "roboto.cpp"
+#include "GameManip.h"
+#include "Console.cpp"
+
+static Console console;
+
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -135,28 +140,26 @@ void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 
-
-
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
-	ImGui_ImplWin32_EnableDpiAwareness();
 
 	isInitialized = true;
 
 	ImGuiIO& io = ImGui::GetIO();
-	GUI::font = io.Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 25);
+	GUI::font = io.Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 30);
 }
 void GUI::Destroy() noexcept
 {
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-
 	SetWindowLongPtr(window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(originalWindowProc));
 
 	DestroyDx();
 }
-
+void GUI::LogToConsole(const char* input) noexcept {
+	console.AddLog(input);
+}
 //Draws/Renders the menu
 void GUI::Draw() noexcept
 {
@@ -167,18 +170,16 @@ void GUI::Draw() noexcept
 	ImGui::NewFrame();
 
 	io.MouseDrawCursor = true;
-
-
+	
+	console.Draw("HeroHookDLL Console", &GUI::showMenu);
 
 	ImGui::PushFont(GUI::font);
-	ImGui::ShowDemoWindow(&showMenu);
-	ImGui::PopFont();
-	ImGui::PushFont(GUI::font);
+	ImGui::Begin("Main Menu", &GUI::showMenu);
+	ImGui::Text("First Integration With the Thing");
+	if (ImGui::Button("Toggle Hero Mode")) {
+		console.AddLog(TurnOnHeroMode().c_str());
+	}
 
-	ImGui::Begin("Main Menu", &showMenu);
-	ImGui::Text("This is a big test to figure out whats wrong with this thing");
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::Button("Button");
 	ImGui::PopFont();
 
 	ImGui::End();
@@ -194,9 +195,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	if (GetAsyncKeyState(VK_F12) & 1)
 		GUI::showMenu = !GUI::showMenu;
-	ImGuiIO& io = ImGui::GetIO();
 	//Pass to imGUI
-	if (io.WantCaptureMouse && ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) && GUI::showMenu)
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) && GUI::showMenu)
 	{
 		return 1L;
 	}
