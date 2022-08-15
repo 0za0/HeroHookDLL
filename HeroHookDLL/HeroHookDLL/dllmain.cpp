@@ -23,6 +23,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "TwitchUtils.h"
 
 
 #pragma comment (lib, "libMinHook.x86.lib")
@@ -155,6 +156,8 @@ DWORD __stdcall DestroyConsole(LPVOID lpParameter) {
 DWORD WINAPI MainMenu(LPVOID lpParam)
 {
 	try {
+
+		
 		GetAddresses();
 		if (hOriginalBink)
 		{
@@ -165,18 +168,21 @@ DWORD WINAPI MainMenu(LPVOID lpParam)
 			printf("Error loading binkw23.dll!\n");
 			return 0;
 		}
+		GUI::Initialize();
+		Hooking::Init();
+		TwitchUtils::SetupIPC();
+
 		SetExecutableFolder();
 		if (Log)
 			fclose(Log);
 
-		GUI::Initialize();
-		Hooking::Init();
 	}
 	catch (const std::exception& error) {
 		MessageBeep(MB_ICONERROR);
 		MessageBox(0, error.what(), "DLL Hook Error", MB_OK | MB_ICONEXCLAMATION);
 		Hooking::Destroy();
 		GUI::Destroy();
+		
 	}
 	//BinkW Stuff
 

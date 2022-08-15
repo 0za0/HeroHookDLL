@@ -170,15 +170,30 @@ void GUI::Draw() noexcept
 	ImGui::NewFrame();
 
 	io.MouseDrawCursor = true;
-	
-	console.Draw("HeroHookDLL Console", &GUI::showMenu);
+
+
 
 	ImGui::PushFont(GUI::font);
-	ImGui::Begin("Main Menu", &GUI::showMenu);
-	ImGui::Text("First Integration With the Thing");
-	if (ImGui::Button("Toggle Hero Mode")) {
-		console.AddLog(TurnOnHeroMode().c_str());
+	ImGui::BeginMainMenuBar();
+	if (ImGui::BeginMenu("Windows"))
+	{
+		if (ImGui::MenuItem("Console"))
+			GUI::showConsole = !GUI::showConsole;
+
+		ImGui::MenuItem("Teleport Menu");
+		ImGui::EndMenu();
 	}
+	ImGui::EndMainMenuBar();
+
+	if (GUI::showConsole)
+		console.Draw("HeroHookDLL Console", &GUI::showConsole);
+
+
+	//ImGui::Begin("Main Menu", &GUI::showMenu);
+	//ImGui::Text("First Integration With the Thing");
+	/*if (ImGui::Button("Toggle Hero Mode")) {
+		console.AddLog(TurnOnHeroMode().c_str());
+	}*/
 
 	ImGui::PopFont();
 
@@ -193,8 +208,9 @@ void GUI::Draw() noexcept
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
-	if (GetAsyncKeyState(VK_F12) & 1)
+	if (GetAsyncKeyState(VK_F12) & 1) 
 		GUI::showMenu = !GUI::showMenu;
+	
 	//Pass to imGUI
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) && GUI::showMenu)
 	{

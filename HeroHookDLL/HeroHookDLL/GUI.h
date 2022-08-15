@@ -6,6 +6,8 @@
 namespace GUI
 {
 
+	inline bool showConsole = false;
+
 	//GUI Stuff
 	inline ImFont* font;
 
