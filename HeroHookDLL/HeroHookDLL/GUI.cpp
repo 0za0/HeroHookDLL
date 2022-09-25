@@ -8,9 +8,10 @@
 #include "roboto.cpp"
 #include "GameManip.h"
 #include "Console.cpp"
+#include "DebugEnabler.cpp"
 
 static Console console;
-
+static DebugEnabler debugger;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -170,19 +171,28 @@ void GUI::Draw() noexcept
 	ImGui::NewFrame();
 
 	io.MouseDrawCursor = true;
-	
-	console.Draw("HeroHookDLL Console", &GUI::showMenu);
+
 
 	ImGui::PushFont(GUI::font);
-	ImGui::Begin("Main Menu", &GUI::showMenu);
-	ImGui::Text("First Integration With the Thing");
-	if (ImGui::Button("Toggle Hero Mode")) {
-		console.AddLog(TurnOnHeroMode().c_str());
-	}
+	ImGui::BeginMainMenuBar();
+	if (ImGui::BeginMenu("Windows"))
+	{
+		if (ImGui::MenuItem("Console"))
+			GUI::showConsole = !GUI::showConsole;
 
+		if (ImGui::MenuItem("Debug Enabler"))
+			GUI::showDebugEnabler = !GUI::showDebugEnabler;
+		ImGui::EndMenu();
+	}
+	ImGui::EndMainMenuBar();
+
+	if (GUI::showConsole)
+		console.Draw("HeroHookDLL Console", &GUI::showConsole);
+
+	if (GUI::showDebugEnabler)
+		debugger.Draw("Debug Enabler", &GUI::showDebugEnabler);
 	ImGui::PopFont();
 
-	ImGui::End();
 
 
 

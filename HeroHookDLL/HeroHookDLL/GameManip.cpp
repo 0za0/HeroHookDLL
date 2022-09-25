@@ -4,6 +4,7 @@
 #include <string>
 #include <stdlib.h>
 #include <iterator>
+#include "intrin.h"
 
 HANDLE ExeBaseAddress = GetModuleHandleA(0);
 
@@ -113,6 +114,41 @@ void DisableGravity() {
 
 	//f(10);
 }
+
+bool GetDebugFlag(int flagIndex) {
+	//Get the pointer inside RAM
+	int offset = *(int*)(0x00601660);
+	//Apply the offset and get the value at the offset position
+	int result = *(((char*)offset) + 0x8 * flagIndex);
+	//Get the other pointer inside RAM
+	offset = *(int*)(0x0064E1F8);
+	//apply the offset and get its address
+	int* flagLoc = (int*)(((char*)offset) + result);
+	uintptr_t* flag = (uintptr_t*)(flagLoc);
+	return *flag != 0;
+	
+}
+
+
+void SetDebugFlag(int flagIndex) {
+	//Get the pointer inside RAM
+	int offset = *(int*)(0x00601660);
+	//Apply the offset and get the value at the offset position
+	int result = *(((char*)offset) + 0x8 * flagIndex);
+	//Get the other pointer inside RAM
+	offset = *(int*)(0x0064E1F8);
+	//apply the offset and get its address
+	int* flagLoc = (int*)(((char*)offset) + result);
+
+
+	DWORD        dwProtect[2];
+	VirtualProtect((void*)(flagLoc), 1, PAGE_EXECUTE_READWRITE, &dwProtect[0]);
+	uintptr_t* flag = (uintptr_t*)(flagLoc);
+	*flag = *flag == 0;
+	VirtualProtect((void*)(flagLoc), 1, dwProtect[0], &dwProtect[1]);
+
+}
+
 void setByte(uint64_t* bytes, uint8_t byte, int pos) {
 	*bytes &= ~((uint64_t)0xff << (8 * pos)); // Clear the current byte
 	*bytes |= ((uint64_t)byte << (8 * pos)); // Set the new byte

@@ -11,13 +11,13 @@ void Hooking::Init()
 	if (MH_Initialize())
 		throw std::runtime_error("Minhook ded");
 
-	if (MH_CreateHook(VFunc(GUI::device, 42), &EndScene, reinterpret_cast<void**>(&EndSceneOriginal)))
+	if (MH_CreateHook(VFunc(GUI::device, 41), &EndScene, reinterpret_cast<void**>(&EndSceneOriginal)))
 		throw std::runtime_error("Minhook ded, hooking EndScene didnt work");
 
 	if (MH_CreateHook(VFunc(GUI::device, 16), &Reset, reinterpret_cast<void**>(&ResetOriginal)))
 		throw std::runtime_error("Minhook ded, hooking Reset didnt work");
 
-	if (MH_CreateHook(VFunc(Hooking::lpDInput, 10), &Hooking::GetDeviceData, reinterpret_cast<void**>(&GetDeviceDataOriginal)))
+	if (MH_CreateHook(VFunc(Hooking::lpDInput, 10), &GetDeviceData, reinterpret_cast<void**>(&GetDeviceDataOriginal)))
 		throw std::runtime_error("Minhook ded, hooking GetDeviceData didnt work");
 
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 9), &GetDeviceState, reinterpret_cast<void**>(&GetDeviceStateOriginal)))
@@ -118,6 +118,7 @@ HRESULT __stdcall Hooking::GetDeviceState(IDirectInputDevice8* pThis, DWORD cbDa
 			else
 				ImGui::GetIO().AddMouseButtonEvent(1, false);
 
+			ImGui::GetIO().AddMousePosEvent(((LPDIMOUSESTATE2)lpvData)->lX, ((LPDIMOUSESTATE2)lpvData)->lY);
 		}
 	}
 

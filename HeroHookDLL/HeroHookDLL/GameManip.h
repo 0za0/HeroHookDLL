@@ -14,6 +14,8 @@ void addToCoordinates(float x, float y, float z);
 void getCoordinates();
 DWORD __stdcall Fly();
 void DisableGravity();
+void SetDebugFlag(int flag);
+bool GetDebugFlag(int flag);
 void EnableGravity();
 void Patch(void* address, std::initializer_list<uint8_t> list);
 void WriteInProcessByte(DWORD Address, unsigned long long value);
