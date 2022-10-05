@@ -38,7 +38,7 @@ bool Hooking::InitInputHook(HMODULE hInst)
 		return false;
 	}
 
-	if (Hooking::DInput->CreateDevice(GUID_SysMouse, &Hooking::lpDInput, NULL) != DI_OK) {
+	if (Hooking::DInput->CreateDevice(GUID_SysMouse, &lpDInput, NULL) != DI_OK) {
 		throw std::runtime_error("Couldnt Create lpDInput");
 		return false;
 	}

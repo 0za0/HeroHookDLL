@@ -58,7 +58,7 @@ void SetExecutableFolder()
 
 void GetAddresses()
 {
-	hOriginalBink = LoadLibrary("binkw23.dll");
+	hOriginalBink = LoadLibrary("binkw32_original.dll");
 	if (hOriginalBink)
 	{
 		p[0] = GetProcAddress(hOriginalBink, "_BinkBufferBlit@12");

@@ -9,6 +9,10 @@ namespace GUI
 	//GUI Stuff
 	inline ImFont* font;
 
+	inline bool showConsole = false;
+	inline bool showDebugEnabler = false;
+
+
 	inline bool showMenu = true;
 	inline bool isInitialized = false;
 	inline HWND window = nullptr;
