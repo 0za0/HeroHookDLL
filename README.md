@@ -5,7 +5,8 @@
 
 A DLL Hook for Bionicle Heroes.
 
-This should act as a speedrun practice helper. 
+V2 in development
+V2 doesnt rely on an injector anymore, it hijacks another DLL (binkw32.dll)
 
 # TODOs 
 - Make keys remappable, seeing as a lot of features are on the numpad only (Working on it)
