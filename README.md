@@ -4,8 +4,11 @@
 
 
 A DLL Hook for Bionicle Heroes written in C++.
+
 The purpose of this tool is to manipulate and inject code at runtime.
+
 ASM Injections are possible and used for further experimentation and reverse-engineering.
+
 It is also possible to trigger "dead" code sections by forcing a function at a certain memory address to be called.
 
 
