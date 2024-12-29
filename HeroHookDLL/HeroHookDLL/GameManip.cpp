@@ -72,7 +72,7 @@ void SetPositionCode()
 
 void Patch(void* address, std::initializer_list<uint8_t> list) {
 	uint8_t* const addr = (uint8_t*)address;
-	std::copy(list.begin(), list.end(), stdext::make_checked_array_iterator(addr, list.size()));
+	//std::copy(list.begin(), list.end(), stdext::make_checked_array_iterator(addr, list.size()));
 }
 
 void EnableGravity() {

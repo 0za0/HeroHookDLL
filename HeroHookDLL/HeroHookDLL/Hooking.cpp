@@ -9,24 +9,22 @@
 void Hooking::Init()
 {
 	if (MH_Initialize())
-		throw std::runtime_error("Minhook ded");
+		throw std::runtime_error("Minhook Initialization failed.");
 
 	if (MH_CreateHook(VFunc(GUI::device, 41), &EndScene, reinterpret_cast<void**>(&EndSceneOriginal)))
-		throw std::runtime_error("Minhook ded, hooking EndScene didnt work");
+		throw std::runtime_error("Minhook Initialization failed, unable to hook EndScene()");
 
 	if (MH_CreateHook(VFunc(GUI::device, 16), &Reset, reinterpret_cast<void**>(&ResetOriginal)))
-		throw std::runtime_error("Minhook ded, hooking Reset didnt work");
+		throw std::runtime_error("Minhook Initialization failed, unable to hool Reset()");
 
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 10), &GetDeviceData, reinterpret_cast<void**>(&GetDeviceDataOriginal)))
-		throw std::runtime_error("Minhook ded, hooking GetDeviceData didnt work");
+		throw std::runtime_error("Minhook Initialization failed, unable to hook GetDeviceData()");
 
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 9), &GetDeviceState, reinterpret_cast<void**>(&GetDeviceStateOriginal)))
-		throw std::runtime_error("Minhook ded, hooking GetDeviceState didnt work");
-
-	
+		throw std::runtime_error("Minhook Initialization failed, unable to hook GetDeviceState()");
 
 	if (MH_EnableHook(MH_ALL_HOOKS))
-		throw std::runtime_error("Minhook ded");
+		throw std::runtime_error("Minhook Initialization failed, unable to Enable Hooks.");
 
 	GUI::DestroyDx();
 
