@@ -7,12 +7,14 @@
 #include "../imGUI/imgui_impl_dx9.h"
 #include "roboto.cpp"
 #include "GameManip.h"
-//TODO: Make this a legit thing, dumbass
+//TODO: Make all GUI windows a class.
 #include "Console.cpp"
 #include "DebugEnabler.cpp"
+#include "CoordinateWindow.cpp"
 
 static Console console;
 static DebugEnabler debugger;
+static CoordinateDisplay coords;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -183,6 +185,10 @@ void GUI::Draw() noexcept
 
 		if (ImGui::MenuItem("Debug Enabler"))
 			GUI::showDebugEnabler = !GUI::showDebugEnabler;
+
+		if (ImGui::MenuItem("Coordinate Display"))
+			GUI::showCoordinates = !GUI::showCoordinates;
+
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
@@ -193,6 +199,10 @@ void GUI::Draw() noexcept
 	if (GUI::showDebugEnabler)
 		debugger.Draw("Debug Enabler", &GUI::showDebugEnabler);
 
+	std::string coord = getCoordinates(); 
+
+	if (GUI::showCoordinates)
+		coords.Draw("buh", &GUI::showCoordinates, coord);
 	ImGui::PopFont();
 
 	//ImGui::End();

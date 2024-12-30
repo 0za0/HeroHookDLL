@@ -6,19 +6,16 @@
 #include <d3dx9.h>
 #include "intrin.h"
 
-extern HANDLE ExeBaseAddress;
-extern std::string* coordinates;
+extern const HANDLE ExeBaseAddress;
+extern std::string coordinates;
 
 std::string TurnOnHeroMode();
 void addToCoordinates(float x, float y, float z);
-void getCoordinates();
+std::string getCoordinates();
 DWORD __stdcall Fly();
-void DisableGravity();
-void EnableGravity();
 void SetDebugFlag(int flagIndex);
 void Patch(void* address, std::initializer_list<uint8_t> list);
 void WriteInProcessByte(DWORD Address, unsigned long long value);
 unsigned long long* ReadInProcessByte(DWORD Address);
-void SetPositionCode();
 void GetPositionCode();
 void setByte(uint64_t* bytes, uint8_t byte, int pos);

@@ -27,22 +27,11 @@
 
 #pragma comment (lib, "libMinHook.x86.lib")
 
-
-bool coordinateToggle = false;
-
-float addX = 10.0;
-float addY = 10.0;
-float addZ = 10.0;
-
-
-
 HINSTANCE hOriginalBink = NULL;
 FARPROC p[71] = { 0 };
 char exeBaseFolder[FILENAME_MAX];
 
 FILE* Log = NULL;
-
-
 
 // Sets exeBaseFolder to hold current executable's path, including "\"
 void SetExecutableFolder()
@@ -53,8 +42,6 @@ void SetExecutableFolder()
 		x--;
 	exeBaseFolder[x + 1] = '\0';
 }
-
-
 
 void GetAddresses()
 {
@@ -137,12 +124,12 @@ void OpenLogFile()
 	if (SHGetKnownFolderPath(FOLDERID_Documents, 0, 0, &docfolder) == S_OK)
 	{
 		wcstombs_s(NULL, logfilepath, docfolder, MAX_PATH);
-		strcat_s(logfilepath, "\\binkw32-me1.log");
+		strcat_s(logfilepath, "\\dllhook.log");
 		fopen_s(&Log, logfilepath, "w");
 		CoTaskMemFree(docfolder);
 		return;
 	}
-	fopen_s(&Log, "binkw32-me1.log", "w");
+	fopen_s(&Log, "dllhook.log", "w");
 }
 
 HMODULE newhModule;
@@ -178,92 +165,8 @@ DWORD WINAPI MainMenu(LPVOID lpParam)
 		Hooking::Destroy();
 		GUI::Destroy();
 	}
-	//BinkW Stuff
-
-	//OpenLogFile();
-	//AllocConsole();
-	//FILE* fp;
-	//freopen_s(&fp, "CONOUT$", "w", stdout);
-	////freopen_s(&fp, "CONIN$", "r", stdin); Not yet
-	//printf("Bootleg DLL Injected Console");
-	//printf("NOTE: CLOSING THE CONSOLE WITH THE X CLOSES THE GAME ... so dont unless you want to idk man you do you\n");
-	//printf("CONTROLS:\n");
-	//printf("The \| Key enables 'flight'\n");
-	//printf("While flying page up and page down add or decrease height\n");
-	//printf("Number 1 Toggles Hero mode\n");
-	//printf("Number 2 Sets your location\n");
-	//printf("Number 3 Teleports you to the set location\n");
-	//printf("\n\nShort Range Teleport Keybinds\n\n");
-	//printf("\t8 Forward\n4 Left\t5  Jump   6 Right\n\t2 Backward");
-	//printf("\n\n\nThe DELETE key unhooks the dll without closing the game!!\n");
-	//InitMinHook();
-
-
-
-
-	//while (1) {
-	//	Sleep(100);
-	//	if (GetAsyncKeyState(VK_DELETE)) {
-	//		MH_DisableHook(MH_ALL_HOOKS);
-	//		CreateThread(0, 0, DestroyConsole, 0, 0, 0);
-	//		break;
-	//	}
-	//	if (GetAsyncKeyState(VK_NUMPAD1)) {
-	//		Sleep(100);
-	//		if (!coordinateToggleOn) {
-	//			getCoordinates();
-	//			coordinateToggleOn = true;
-	//		}
-	//		else {
-	//			//MH_DisableHook(MH_ALL_HOOKS);
-	//			coordinateToggleOn = false;
-	//		}
-	//	}
-	//	if (GetAsyncKeyState(0x32))//2 key
-	//	{
-	//		//printf("Set position\n");
-	//		SetPositionCode();
-	//	}
-	//	if (GetAsyncKeyState(0x33))//3 key
-	//		GetPositionCode();
-
-	//	if (GetAsyncKeyState(0x31)) {
-	//		Sleep(100); //No spam ... stop
-	//		TurnOnHeroMode();
-	//	}
-	//	if (GetAsyncKeyState(VK_OEM_5)) { //The fuck
-	//		DisableGravity();
-	//		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Fly, 0, 0, 0);//
-	//	}
-
-	//	//Movement stuff
-	//	if (GetAsyncKeyState(VK_NUMPAD8))
-	//		addToCoordinates(0, addY, 0);
-
-	//	if (GetAsyncKeyState(VK_NUMPAD2))
-	//		addToCoordinates(0, -addY, 0);
-
-	//	if (GetAsyncKeyState(VK_NUMPAD4))
-	//		addToCoordinates(-addX, 0, 0);
-
-	//	if (GetAsyncKeyState(VK_NUMPAD6))
-	//		addToCoordinates(addX, 0, 0);
-
-	//	if (GetAsyncKeyState(VK_NUMPAD5))
-	//		addToCoordinates(0, 0, addZ);
-	//}
-	//fclose(fp);
-	//FreeConsole();
-	// Close the thing
-	//CreateThread(0, 0, DestroyConsole, 0, 0, 0);
-
-
-
+	
 	return 0;
-
-
-
-
 }
 
 

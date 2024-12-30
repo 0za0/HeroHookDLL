@@ -6,27 +6,28 @@
 #include "../imGUI/imgui_impl_win32.h"
 #include "../imGUI/imgui_impl_dx9.h"
 
+/***/
 void Hooking::Init()
 {
 	if (MH_Initialize())
-		throw std::runtime_error("Minhook ded");
+		throw std::runtime_error("Minhook Initialization failed.");
 
 	if (MH_CreateHook(VFunc(GUI::device, 42), &EndScene, reinterpret_cast<void**>(&EndSceneOriginal)))
-		throw std::runtime_error("Minhook ded, hooking EndScene didnt work");
+		throw std::runtime_error("Minhook Initialization failed. Unable to hook EndScene()");
 
 	if (MH_CreateHook(VFunc(GUI::device, 16), &Reset, reinterpret_cast<void**>(&ResetOriginal)))
-		throw std::runtime_error("Minhook ded, hooking Reset didnt work");
+		throw std::runtime_error("Minhook Initialization failed unable to hook Reset()");
 
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 10), &Hooking::GetDeviceData, reinterpret_cast<void**>(&GetDeviceDataOriginal)))
-		throw std::runtime_error("Minhook ded, hooking GetDeviceData didnt work");
+		throw std::runtime_error("Minhook Initialization failed. Unable to hook GetDeviceData().");
 
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 9), &GetDeviceState, reinterpret_cast<void**>(&GetDeviceStateOriginal)))
-		throw std::runtime_error("Minhook ded, hooking GetDeviceState didnt work");
+		throw std::runtime_error("Minhook Initialization failed. Unable to hook GetDeviceState().");
 
 	
 
 	if (MH_EnableHook(MH_ALL_HOOKS))
-		throw std::runtime_error("Minhook ded");
+		throw std::runtime_error("Minhook Initialization failed. Unable to enable all hooks.");
 
 	GUI::DestroyDx();
 
@@ -34,12 +35,12 @@ void Hooking::Init()
 bool Hooking::InitInputHook(HMODULE hInst)
 {
 	if (DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&Hooking::DInput, NULL) != DI_OK) {
-		throw std::runtime_error("Couldnt Create DirectInputDevice");
+		throw std::runtime_error("Unable to create DirectInputDevice");
 		return false;
 	}
 
 	if (Hooking::DInput->CreateDevice(GUID_SysMouse, &lpDInput, NULL) != DI_OK) {
-		throw std::runtime_error("Couldnt Create lpDInput");
+		throw std::runtime_error("Unable to create lpDInput");
 		return false;
 	}
 

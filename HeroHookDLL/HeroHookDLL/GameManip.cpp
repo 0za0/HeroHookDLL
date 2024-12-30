@@ -4,10 +4,11 @@
 #include <string>
 #include <stdlib.h>
 #include <iterator>
+#include <format>
 
-HANDLE ExeBaseAddress = GetModuleHandleA(0);
+const HANDLE ExeBaseAddress = GetModuleHandleA(0);
 
-std::string* coordinates = new std::string();
+std::string coordinates;
 bool isFlying = false;
 
 float x = 0;
@@ -50,17 +51,28 @@ void SetDebugFlag(int flagIndex) {
 }
 
 
-void getCoordinates() {
+std::string getCoordinates() {
 	uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
-	uintptr_t ModuleBaseAdrs = (DWORD&)*coordinateBasePointer;
+	if (!coordinateBasePointer || IsBadReadPtr(coordinateBasePointer, sizeof(uintptr_t))) {
+		return "Invalid coordinate base pointer.";
+	}
+
+	uintptr_t ModuleBaseAdrs = *coordinateBasePointer;
+	if (!ModuleBaseAdrs) {
+		return "Module base address is null.";
+	}
+
 	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
 	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
 	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 
-	z = *(float*)ZCoord;
-	x = *(float*)XCoord;
-	y = *(float*)YCoord;
-	*coordinates = "X: " + std::to_string(x) + " Y: " + std::to_string(y) + " Z:" + std::to_string(z);
+	float z = 0.0f, x = 0.0f, y = 0.0f;
+
+	if (!IsBadReadPtr(ZCoord, sizeof(float))) z = *(float*)ZCoord;
+	if (!IsBadReadPtr(XCoord, sizeof(float))) x = *(float*)XCoord;
+	if (!IsBadReadPtr(YCoord, sizeof(float))) y = *(float*)YCoord;
+
+	return std::format("X: {:.2f}\tY: {:.2f}\tZ: {:.2f}", x, y, z);
 }
 
 void addToCoordinates(float x, float y, float z) {
@@ -79,58 +91,13 @@ void addToCoordinates(float x, float y, float z) {
 	*currenty += y;
 	*currentz += z;
 }
-void SetPositionCode()
-{
-	getCoordinates();
-	positionCodeX = x;
-	positionCodeY = y;
-	positionCodeZ = z;
-}
+
 
 void Patch(void* address, std::initializer_list<uint8_t> list) {
 	uint8_t* const addr = (uint8_t*)address;
-	std::copy(list.begin(), list.end(), stdext::make_checked_array_iterator(addr, list.size()));
+	//std::copy(list.begin(), list.end(), stdext::make_checked_array_iterator(addr, list.size()));
 }
 
-void EnableGravity() {
-	std::initializer_list<uint8_t> list = { 0xD9, 0x9E ,0xF4 ,0x00 ,0x00 ,0x00 };
-	DWORD		dwProtect[2];
-	VirtualProtect((void*)0x004ABF6F, list.size(), PAGE_EXECUTE_READWRITE, &dwProtect[0]);
-	Patch((void*)0x004ABF6F, std::move(list));
-	VirtualProtect((void*)0x004ABF6F, list.size(), dwProtect[0], &dwProtect[1]);
-
-	//8E8B000000F486
-	std::initializer_list<uint8_t> listt = { 0x8B, 0x86 ,0xF4 ,0x00 ,0x00 ,0x00 };
-	DWORD		dwProtectt[2];
-	VirtualProtect((void*)0x004ABE45, listt.size(), PAGE_EXECUTE_READWRITE, &dwProtectt[0]);
-	Patch((void*)0x004ABE45, std::move(listt));
-	VirtualProtect((void*)0x004ABE45, listt.size(), dwProtectt[0], &dwProtectt[1]);
-}
-
-void DisableGravity() {
-
-	//Gravity Enabled
-//448B000000F49ED9
-//8E8B000000F4868B
-
-	DWORD		dwProtect[2];
-	VirtualProtect((void*)0x004ABF6F, 6, PAGE_EXECUTE_READWRITE, &dwProtect[0]);
-	memset((void*)(0x004ABF6F), 0x90, 6);
-	VirtualProtect((void*)0x004ABF6F, 6, dwProtect[0], &dwProtect[1]);
-
-
-	DWORD		dwProtectt[2];
-	VirtualProtect((void*)0x004ABE45, 6, PAGE_EXECUTE_READWRITE, &dwProtectt[0]);
-	memset((void*)(0x004ABE45), 0x90, 6);
-	VirtualProtect((void*)0x004ABE45, 6, dwProtectt[0], &dwProtectt[1]);
-
-	//printf("Trying to run the function");
-	//typedef void __cdecl func(int a);
-	////func* f = (func*)(0x004FF8CF);
-	//func* f=(func*)(0x00455AE0);
-
-	//f(10);
-}
 void setByte(uint64_t* bytes, uint8_t byte, int pos) {
 	*bytes &= ~((uint64_t)0xff << (8 * pos)); // Clear the current byte
 	*bytes |= ((uint64_t)byte << (8 * pos)); // Set the new byte
@@ -145,7 +112,7 @@ void WriteInProcessByte(DWORD Address, unsigned long long Value)
 	*(unsigned long long*)Address = Value;
 }
 
-DWORD __stdcall Fly() {
+/*DWORD __stdcall Fly() {
 	uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
 	uintptr_t ModuleBaseAdrs = (DWORD&)*p;
 	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
@@ -163,12 +130,11 @@ DWORD __stdcall Fly() {
 			setHeight -= 1;
 		}
 		if (GetAsyncKeyState(VK_BACK)) {
-			EnableGravity();
 			break;
 		}
 	}
 	return 0;
-}
+}*/
 
 
 void GetPositionCode() {

@@ -15,6 +15,8 @@ namespace GUI
 
 	inline bool showMenu = true;
 	inline bool isInitialized = false;
+	inline bool showCoordinates = false;
+
 	inline HWND window = nullptr;
 	inline WNDCLASSEX windowClass = {  };
 	inline WNDPROC originalWindowProc = nullptr;
