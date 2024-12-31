@@ -4,11 +4,11 @@
 #include <string>
 #include <stdlib.h>
 #include <iterator>
-#include "intrin.h"
+#include <format>
 
-HANDLE ExeBaseAddress = GetModuleHandleA(0);
+const HANDLE ExeBaseAddress = GetModuleHandleA(0);
 
-std::string* coordinates = new std::string();
+std::string coordinates;
 bool isFlying = false;
 
 float x = 0;
@@ -31,19 +31,47 @@ float positionCodeY = 0;
 float positionCodeZ = 0;
 float setHeight = 20;
 
+void SetDebugFlag(int flagIndex) {
+	//Get the pointer inside RAM
+	int offset = *(int*)(0x00601660);
+	//Apply the offset and get the value at the offset position
+	int result = *(((char*)offset) + 0x8 * flagIndex);
+	//Get the other pointer inside RAM
+	offset = *(int*)(0x0064E1F8);
+	//apply the offset and get its address
+	int* flagLoc = (int*)(((char*)offset) + result);
 
 
-void getCoordinates() {
+	DWORD        dwProtect[2];
+	VirtualProtect((void*)(flagLoc), 1, PAGE_EXECUTE_READWRITE, &dwProtect[0]);
+	uintptr_t* flag = (uintptr_t*)(flagLoc);
+	*flag = *flag == 0;
+	VirtualProtect((void*)(flagLoc), 1, dwProtect[0], &dwProtect[1]);
+
+}
+
+void getCoordinates(Coordinates& coords) {
 	uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
-	uintptr_t ModuleBaseAdrs = (DWORD&)*coordinateBasePointer;
+	if (!coordinateBasePointer || IsBadReadPtr(coordinateBasePointer, sizeof(uintptr_t))) {
+		coords.isValid = false;
+		return;
+	}
+
+	uintptr_t ModuleBaseAdrs = *coordinateBasePointer;
+	if (!ModuleBaseAdrs) {
+		coords.isValid = false;
+		return;
+	}
+
 	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
 	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
 	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 
-	z = *(float*)ZCoord;
-	x = *(float*)XCoord;
-	y = *(float*)YCoord;
-	*coordinates = "X: " + std::to_string(x) + " Y: " + std::to_string(y) + " Z:" + std::to_string(z);
+	if (!IsBadReadPtr(ZCoord, sizeof(float))) coords.z = *(float*)ZCoord;
+	if (!IsBadReadPtr(XCoord, sizeof(float))) coords.x = *(float*)XCoord;
+	if (!IsBadReadPtr(YCoord, sizeof(float))) coords.y = *(float*)YCoord;
+
+	coords.isValid = true; 
 }
 
 void addToCoordinates(float x, float y, float z) {
@@ -58,61 +86,15 @@ void addToCoordinates(float x, float y, float z) {
 	//uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	float* currenty = (float*)YCoord;
 
-	*currentx += x;
-	*currenty += y;
-	*currentz += z;
+	*currentx = x;
+	*currenty = y;
+	*currentz = z;
 }
-void SetPositionCode()
-{
-	getCoordinates();
-	positionCodeX = x;
-	positionCodeY = y;
-	positionCodeZ = z;
-}
+
 
 void Patch(void* address, std::initializer_list<uint8_t> list) {
 	uint8_t* const addr = (uint8_t*)address;
-	std::copy(list.begin(), list.end(), stdext::make_checked_array_iterator(addr, list.size()));
-}
-
-void EnableGravity() {
-	std::initializer_list<uint8_t> list = { 0xD9, 0x9E ,0xF4 ,0x00 ,0x00 ,0x00 };
-	DWORD		dwProtect[2];
-	VirtualProtect((void*)0x004ABF6F, list.size(), PAGE_EXECUTE_READWRITE, &dwProtect[0]);
-	Patch((void*)0x004ABF6F, std::move(list));
-	VirtualProtect((void*)0x004ABF6F, list.size(), dwProtect[0], &dwProtect[1]);
-
-	//8E8B000000F486
-	std::initializer_list<uint8_t> listt = { 0x8B, 0x86 ,0xF4 ,0x00 ,0x00 ,0x00 };
-	DWORD		dwProtectt[2];
-	VirtualProtect((void*)0x004ABE45, listt.size(), PAGE_EXECUTE_READWRITE, &dwProtectt[0]);
-	Patch((void*)0x004ABE45, std::move(listt));
-	VirtualProtect((void*)0x004ABE45, listt.size(), dwProtectt[0], &dwProtectt[1]);
-}
-
-void DisableGravity() {
-
-	//Gravity Enabled
-//448B000000F49ED9
-//8E8B000000F4868B
-
-	DWORD		dwProtect[2];
-	VirtualProtect((void*)0x004ABF6F, 6, PAGE_EXECUTE_READWRITE, &dwProtect[0]);
-	memset((void*)(0x004ABF6F), 0x90, 6);
-	VirtualProtect((void*)0x004ABF6F, 6, dwProtect[0], &dwProtect[1]);
-
-
-	DWORD		dwProtectt[2];
-	VirtualProtect((void*)0x004ABE45, 6, PAGE_EXECUTE_READWRITE, &dwProtectt[0]);
-	memset((void*)(0x004ABE45), 0x90, 6);
-	VirtualProtect((void*)0x004ABE45, 6, dwProtectt[0], &dwProtectt[1]);
-
-	//printf("Trying to run the function");
-	//typedef void __cdecl func(int a);
-	////func* f = (func*)(0x004FF8CF);
-	//func* f=(func*)(0x00455AE0);
-
-	//f(10);
+	//std::copy(list.begin(), list.end(), stdext::make_checked_array_iterator(addr, list.size()));
 }
 
 bool GetDebugFlag(int flagIndex) {
@@ -163,7 +145,7 @@ void WriteInProcessByte(DWORD Address, unsigned long long Value)
 	*(unsigned long long*)Address = Value;
 }
 
-DWORD __stdcall Fly() {
+/*DWORD __stdcall Fly() {
 	uintptr_t* p = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
 	uintptr_t ModuleBaseAdrs = (DWORD&)*p;
 	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
@@ -181,12 +163,11 @@ DWORD __stdcall Fly() {
 			setHeight -= 1;
 		}
 		if (GetAsyncKeyState(VK_BACK)) {
-			EnableGravity();
 			break;
 		}
 	}
 	return 0;
-}
+}*/
 
 
 void GetPositionCode() {
