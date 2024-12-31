@@ -50,29 +50,28 @@ void SetDebugFlag(int flagIndex) {
 
 }
 
-
-std::string getCoordinates() {
+void getCoordinates(Coordinates& coords) {
 	uintptr_t* coordinateBasePointer = (uintptr_t*)((uintptr_t)ExeBaseAddress + 0x252CBC);
 	if (!coordinateBasePointer || IsBadReadPtr(coordinateBasePointer, sizeof(uintptr_t))) {
-		return "Invalid coordinate base pointer.";
+		coords.isValid = false;
+		return;
 	}
 
 	uintptr_t ModuleBaseAdrs = *coordinateBasePointer;
 	if (!ModuleBaseAdrs) {
-		return "Module base address is null.";
+		coords.isValid = false;
+		return;
 	}
 
 	uintptr_t* ZCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E4);
 	uintptr_t* XCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E0);
 	uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 
-	float z = 0.0f, x = 0.0f, y = 0.0f;
+	if (!IsBadReadPtr(ZCoord, sizeof(float))) coords.z = *(float*)ZCoord;
+	if (!IsBadReadPtr(XCoord, sizeof(float))) coords.x = *(float*)XCoord;
+	if (!IsBadReadPtr(YCoord, sizeof(float))) coords.y = *(float*)YCoord;
 
-	if (!IsBadReadPtr(ZCoord, sizeof(float))) z = *(float*)ZCoord;
-	if (!IsBadReadPtr(XCoord, sizeof(float))) x = *(float*)XCoord;
-	if (!IsBadReadPtr(YCoord, sizeof(float))) y = *(float*)YCoord;
-
-	return std::format("X: {:.2f}\tY: {:.2f}\tZ: {:.2f}", x, y, z);
+	coords.isValid = true; 
 }
 
 void addToCoordinates(float x, float y, float z) {
@@ -87,9 +86,9 @@ void addToCoordinates(float x, float y, float z) {
 	//uintptr_t* YCoord = (uintptr_t*)(ModuleBaseAdrs + 0x6E8);
 	float* currenty = (float*)YCoord;
 
-	*currentx += x;
-	*currenty += y;
-	*currentz += z;
+	*currentx = x;
+	*currenty = y;
+	*currentz = z;
 }
 
 

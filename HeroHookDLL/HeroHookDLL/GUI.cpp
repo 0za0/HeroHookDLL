@@ -11,10 +11,14 @@
 #include "Console.cpp"
 #include "DebugEnabler.cpp"
 #include "CoordinateWindow.cpp"
+#include "CoordinateManipulator.hpp"
 
 static Console console;
 static DebugEnabler debugger;
 static CoordinateDisplay coords;
+Coordinates sharedCoordinates;
+GUI::CoordinateManipulator manipulator;
+
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -133,7 +137,7 @@ void GUI::Initialize()
 
 void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 {
-
+	manipulator = CoordinateManipulator(400, 200, "Coordinate Manipulator", false, &sharedCoordinates);
 	auto params = D3DDEVICE_CREATION_PARAMETERS{  };
 	device->GetCreationParameters(&params);
 
@@ -174,8 +178,8 @@ void GUI::Draw() noexcept
 	ImGui::NewFrame();
 
 	io.MouseDrawCursor = true;
-	
-	
+
+
 	ImGui::PushFont(GUI::font);
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("Windows"))
@@ -187,7 +191,7 @@ void GUI::Draw() noexcept
 			GUI::showDebugEnabler = !GUI::showDebugEnabler;
 
 		if (ImGui::MenuItem("Coordinate Display"))
-			GUI::showCoordinates = !GUI::showCoordinates;
+			manipulator.show = !manipulator.show;
 
 		ImGui::EndMenu();
 	}
@@ -199,10 +203,12 @@ void GUI::Draw() noexcept
 	if (GUI::showDebugEnabler)
 		debugger.Draw("Debug Enabler", &GUI::showDebugEnabler);
 
-	std::string coord = getCoordinates(); 
+	if (manipulator.show)
+	{
+		getCoordinates(sharedCoordinates);
+		manipulator.Draw();
+	}
 
-	if (GUI::showCoordinates)
-		coords.Draw("buh", &GUI::showCoordinates, coord);
 	ImGui::PopFont();
 
 	//ImGui::End();

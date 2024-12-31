@@ -176,12 +176,13 @@
     <ClInclude Include="..\imGUI\imstb_rectpack.h" />
     <ClInclude Include="..\imGUI\imstb_textedit.h" />
     <ClInclude Include="..\imGUI\imstb_truetype.h" />
+    <ClInclude Include="CoordinateManipulator.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManip.h" />
     <ClInclude Include="GUI.h" />
+    <ClInclude Include="GUIWindowBase.hpp" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Hooking.h" />
-    <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\imGUI\imgui.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="..\imGUI\imgui_tables.cpp" />
     <ClCompile Include="..\imGUI\imgui_widgets.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="CoordinateManipulator.cpp" />
     <ClCompile Include="CoordinateWindow.cpp" />
     <ClCompile Include="DebugEnabler.cpp" />
     <ClCompile Include="dllmain.cpp" />
