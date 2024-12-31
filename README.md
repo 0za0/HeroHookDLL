@@ -3,9 +3,26 @@
 
 
 
-A DLL Hook for Bionicle Heroes.
+A DLL Hook for Bionicle Heroes written in C++.
 
-This should act as a speedrun practice helper. 
+The purpose of this tool is to manipulate and inject code at runtime.
+
+ASM Injections are possible and used for further experimentation and reverse-engineering.
+
+It is also possible to trigger "dead" code sections by forcing a function at a certain memory address to be called.
+
+
+V2 in development
+
+
+V2 doesnt rely on an injector anymore, it hijacks another DLL (binkw32.dll)
+
+
+V2 also uses a dedicated GUI Library and hijacks more parts of the engine/game.
+
+
+The keyboard and mouse get intercepted.
+
 
 # TODOs 
 - Make keys remappable, seeing as a lot of features are on the numpad only (Working on it)

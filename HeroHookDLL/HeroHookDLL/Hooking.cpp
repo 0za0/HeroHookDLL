@@ -21,6 +21,7 @@ void Hooking::Init()
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 10), &Hooking::GetDeviceData, reinterpret_cast<void**>(&GetDeviceDataOriginal)))
 		throw std::runtime_error("Minhook Initialization failed. Unable to hook GetDeviceData().");
 
+
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 9), &GetDeviceState, reinterpret_cast<void**>(&GetDeviceStateOriginal)))
 		throw std::runtime_error("Minhook Initialization failed. Unable to hook GetDeviceState().");
 
@@ -119,6 +120,7 @@ HRESULT __stdcall Hooking::GetDeviceState(IDirectInputDevice8* pThis, DWORD cbDa
 			else
 				ImGui::GetIO().AddMouseButtonEvent(1, false);
 
+			ImGui::GetIO().AddMousePosEvent(((LPDIMOUSESTATE2)lpvData)->lX, ((LPDIMOUSESTATE2)lpvData)->lY);
 		}
 	}
 

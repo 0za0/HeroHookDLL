@@ -22,6 +22,8 @@ void addToCoordinates(float x, float y, float z);
 void getCoordinates(Coordinates& coords);
 DWORD __stdcall Fly();
 void SetDebugFlag(int flagIndex);
+void SetDebugFlag(int flag);
+bool GetDebugFlag(int flag);
 void Patch(void* address, std::initializer_list<uint8_t> list);
 void WriteInProcessByte(DWORD Address, unsigned long long value);
 unsigned long long* ReadInProcessByte(DWORD Address);

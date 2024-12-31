@@ -14,6 +14,10 @@ namespace GUI
 
 
 	inline bool showMenu = true;
+
+	inline bool showConsole = false;
+	inline bool showDebugEnabler = false;
+
 	inline bool isInitialized = false;
 	inline bool showCoordinates = false;
 

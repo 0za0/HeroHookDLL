@@ -189,7 +189,6 @@ void GUI::Draw() noexcept
 
 		if (ImGui::MenuItem("Debug Enabler"))
 			GUI::showDebugEnabler = !GUI::showDebugEnabler;
-
 		if (ImGui::MenuItem("Coordinate Display"))
 			manipulator.show = !manipulator.show;
 
@@ -207,11 +206,19 @@ void GUI::Draw() noexcept
 	{
 		getCoordinates(sharedCoordinates);
 		manipulator.Draw();
-	}
 
+	}
+	ImGui::EndMainMenuBar();
+
+	if (GUI::showConsole)
+		console.Draw("HeroHookDLL Console", &GUI::showConsole);
+
+	if (GUI::showDebugEnabler)
+		debugger.Draw("Debug Enabler", &GUI::showDebugEnabler);
 	ImGui::PopFont();
 
 	//ImGui::End();
+
 
 
 
