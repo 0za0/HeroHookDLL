@@ -14,9 +14,18 @@ struct Coordinates {
 	bool isValid = false; // Indicates if the data is valid
 };
 
+struct PositionCode {
+	float x;
+	float y; 
+	float z;
+	uint8_t levelId; 
+	std::string title;
+};
+
 extern const HANDLE ExeBaseAddress;
 extern std::string coordinates;
 
+uint8_t getLevelId();
 std::string TurnOnHeroMode();
 void addToCoordinates(float x, float y, float z);
 void getCoordinates(Coordinates& coords);

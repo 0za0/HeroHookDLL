@@ -10,12 +10,9 @@ namespace GUI {
 		}
 		if (coordinates && coordinates->isValid) {
 			ImGui::Text("Coordinates:");
-			ImGui::Text("X: %.2f", coordinates->x);
-			ImGui::Text("Y: %.2f", coordinates->y);
-			ImGui::Text("Z: %.2f", coordinates->z);
-			ImGui::Separator();
+			ImGui::Text("X: %.2f\tZ: %.2f\tY: %.2f", coordinates->x, coordinates->y, coordinates->z);
+			ImGui::SeparatorText("Manipulation");
 			ImGui::SliderFloat3("Set Coordinates", coordsToSet, -999.9, 999.9, "%.2f");
-
 			if (ImGui::Button("COPY COORDS")) {
 				memcpy(coordsToSet, coordinates, sizeof(float) * 3);
 			}
