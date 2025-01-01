@@ -1,8 +1,11 @@
+#define NOMINMAX
 #pragma once
 #include "GUIWindowBase.hpp"
 #include "GameManip.h"
 #include "../imGUI/imgui.h"
 #include <vector>
+#include <algorithm>
+
 
 namespace GUI {
 

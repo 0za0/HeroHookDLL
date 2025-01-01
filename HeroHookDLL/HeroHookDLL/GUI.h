@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d9.h>
 #include "../imGUI/imgui.h"
+#define NOMINMAX
 
 
 namespace GUI
