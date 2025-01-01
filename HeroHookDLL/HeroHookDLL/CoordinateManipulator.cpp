@@ -50,10 +50,7 @@ namespace GUI {
                 }
             }
             ImGui::EndChild();
-
             ImGui::SameLine();
-
-            // Right-side list of position codes
             ImGui::BeginChild("Position Code List", ImVec2(rightWidth, 0), true);
             {
                 for (size_t index = 0; index < positionCodes.size(); ++index) {
