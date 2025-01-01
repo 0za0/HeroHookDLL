@@ -14,9 +14,10 @@ ImVector<PositionCode> readPositionCodesFromFile()
 
     std::string line;
 
-    //SKIP THE HEADER
-    if (std::getline(positionCodeFile, line));
-    
+    // Skip the header
+    if (std::getline(positionCodeFile, line)) {
+        // Optionally verify header format if needed
+    }
 
     // Read each line
     while (std::getline(positionCodeFile, line)) {
@@ -24,13 +25,22 @@ ImVector<PositionCode> readPositionCodesFromFile()
         PositionCode code;
 
         std::string temp;
-        if (std::getline(lineStream, temp, ';')) code.x = std::stof(temp);
-        if (std::getline(lineStream, temp, ';')) code.y = std::stof(temp);
-        if (std::getline(lineStream, temp, ';')) code.z = std::stof(temp);
-        if (std::getline(lineStream, temp, ';')) code.levelId = std::stoi(temp);
-        if (std::getline(lineStream, temp, ';')) code.title = temp;
+        try {
+            if (std::getline(lineStream, temp, ';')) code.x = std::stof(temp);
+            if (std::getline(lineStream, temp, ';')) code.y = std::stof(temp);
+            if (std::getline(lineStream, temp, ';')) code.z = std::stof(temp);
+            if (std::getline(lineStream, temp, ';')) code.levelId = static_cast<uint8_t>(std::stoi(temp));
 
-        retval.push_back(code);
+            if (std::getline(lineStream, temp, ';')) {
+                strncpy_s(code.title, temp.c_str(), sizeof(code.title));
+                code.title[sizeof(code.title) - 1] = '\0'; // ensure null termination
+            }
+
+            retval.push_back(code);
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error parsing line: " << line << " - " << e.what() << "\n";
+        }
     }
 
     return retval;

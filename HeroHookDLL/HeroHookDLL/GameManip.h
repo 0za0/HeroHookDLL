@@ -15,7 +15,7 @@ struct Coordinates {
 struct PositionCode {
 	float x = 0.0f, y = 0.0f, z = 0.0f;
 	uint8_t levelId = 0;
-	std::string title;
+	char title[256];
 };
 
 extern const HANDLE ExeBaseAddress;
