@@ -15,10 +15,10 @@ struct Coordinates {
 };
 
 struct PositionCode {
-	float x;
-	float y; 
-	float z;
-	uint8_t levelId; 
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	uint8_t levelId = 0;
 	std::string title;
 };
 

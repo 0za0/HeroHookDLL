@@ -2,12 +2,14 @@
 #include "GUIWindowBase.hpp"
 #include "GameManip.h"
 #include "../imGUI/imgui.h"
+#include <vector>
 
 namespace GUI {
 
 	class CoordinateManipulator : public GUIBaseClass {
 		Coordinates* coordinates;
 		float coordsToSet[4] = { 0.0 ,0.0 ,0.0, 0.0 };
+		ImVector<PositionCode> positionCodes;
 	public:
 		CoordinateManipulator() :GUIBaseClass() {
 			width = 0;

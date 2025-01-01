@@ -173,6 +173,7 @@
     <ClInclude Include="..\imGUI\imgui_impl_dx9.h" />
     <ClInclude Include="..\imGUI\imgui_impl_win32.h" />
     <ClInclude Include="..\imGUI\imgui_internal.h" />
+    <ClInclude Include="..\imGUI\imgui_stdlib.h" />
     <ClInclude Include="..\imGUI\imstb_rectpack.h" />
     <ClInclude Include="..\imGUI\imstb_textedit.h" />
     <ClInclude Include="..\imGUI\imstb_truetype.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="..\imGUI\imgui_draw.cpp" />
     <ClCompile Include="..\imGUI\imgui_impl_dx9.cpp" />
     <ClCompile Include="..\imGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\imGUI\imgui_stdlib.cpp" />
     <ClCompile Include="..\imGUI\imgui_tables.cpp" />
     <ClCompile Include="..\imGUI\imgui_widgets.cpp" />
     <ClCompile Include="Console.cpp" />

@@ -63,6 +63,9 @@
     <ClInclude Include="CoordinateManipulator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\imGUI\imgui_stdlib.h">
+      <Filter>imGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -112,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="CoordinateManipulator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imGUI\imgui_stdlib.cpp">
+      <Filter>imGUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
