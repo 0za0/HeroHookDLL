@@ -8,16 +8,12 @@
 
 //Probably extend this to share more
 struct Coordinates {
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
+	float x = 0.0f,y = 0.0f, z = 0.0f;
 	bool isValid = false; // Indicates if the data is valid
 };
 
 struct PositionCode {
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
 	uint8_t levelId = 0;
 	std::string title;
 };
