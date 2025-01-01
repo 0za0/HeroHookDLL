@@ -178,6 +178,7 @@
     <ClInclude Include="..\imGUI\imstb_textedit.h" />
     <ClInclude Include="..\imGUI\imstb_truetype.h" />
     <ClInclude Include="CoordinateManipulator.hpp" />
+    <ClInclude Include="FileUtilities.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManip.h" />
     <ClInclude Include="GUI.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="CoordinateWindow.cpp" />
     <ClCompile Include="DebugEnabler.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FileUtilities.cpp" />
     <ClCompile Include="GameManip.cpp" />
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hooking.cpp" />

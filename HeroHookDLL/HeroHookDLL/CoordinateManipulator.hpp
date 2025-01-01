@@ -29,6 +29,9 @@ namespace GUI {
 			show = s;
 			coordinates = coords;
 		}
+		void SetPositionCodes(ImVector<PositionCode> posCodes) {
+			positionCodes = posCodes;
+		}
 
 		void Draw() override;
 	};

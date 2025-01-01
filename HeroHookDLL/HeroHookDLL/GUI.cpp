@@ -12,6 +12,7 @@
 #include "DebugEnabler.cpp"
 #include "CoordinateWindow.cpp"
 #include "CoordinateManipulator.hpp"
+#include "FileUtilities.hpp"
 
 static Console console;
 static DebugEnabler debugger;
@@ -136,7 +137,11 @@ void GUI::Initialize()
 
 void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 {
+	//Initialization
 	manipulator = CoordinateManipulator(400, 200, "Coordinate Manipulator", false, &sharedCoordinates);
+	manipulator.SetPositionCodes(readPositionCodesFromFile());
+
+
 	auto params = D3DDEVICE_CREATION_PARAMETERS{  };
 	device->GetCreationParameters(&params);
 

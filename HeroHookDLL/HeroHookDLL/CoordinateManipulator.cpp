@@ -1,5 +1,6 @@
 #include "CoordinateManipulator.hpp"
 #include "../imGUI/imgui_stdlib.h"
+#include "FileUtilities.hpp"
 
 
 namespace GUI {
@@ -47,6 +48,7 @@ namespace GUI {
                     PositionCode newPositionCode = positionCode;
                     newPositionCode.levelId = getLevelId();
                     positionCodes.push_back(newPositionCode);
+                    writePositionCodesToFile(&positionCodes);
                 }
             }
             ImGui::EndChild();

@@ -66,6 +66,9 @@
     <ClInclude Include="..\imGUI\imgui_stdlib.h">
       <Filter>imGUI</Filter>
     </ClInclude>
+    <ClInclude Include="FileUtilities.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="..\imGUI\imgui_stdlib.cpp">
       <Filter>imGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="FileUtilities.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

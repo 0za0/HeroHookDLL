@@ -47,7 +47,13 @@ bool writePositionCodesToFile(ImVector<PositionCode>* positionCodes)
     {
         if (!std::filesystem::exists(FILE_PATH))
         {
-            throw std::runtime_error("Invalid file path");
+            std::ofstream createFile(FILE_PATH);
+            if (!createFile.is_open())
+            {
+                std::cerr << "Error: Could not create file at " << FILE_PATH << "\n";
+                return false;
+            }
+            createFile.close();
         }
 
         std::ofstream positionCodeFile(FILE_PATH);
@@ -62,7 +68,7 @@ bool writePositionCodesToFile(ImVector<PositionCode>* positionCodes)
         {
             positionCodeFile << std::fixed << std::setprecision(2)
                 << code.x << ";" << code.y << ";" << code.z << ";"
-                << code.levelId << ";" << code.title << "\n";
+                << static_cast<int>(code.levelId) << ";" << code.title << "\n";
         }
 
         return true;
