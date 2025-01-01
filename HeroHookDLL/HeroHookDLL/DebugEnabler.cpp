@@ -14,8 +14,6 @@ struct DebugEnabler {
 		{
 			MenuItemEnabled.push_back(false);
 		}
-
-
 	}
 
 	~DebugEnabler() {

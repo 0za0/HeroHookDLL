@@ -12,8 +12,8 @@ void Hooking::Init()
 	if (MH_Initialize())
 		throw std::runtime_error("Minhook Initialization failed.");
 
-	if (MH_CreateHook(VFunc(GUI::device, 42), &EndScene, reinterpret_cast<void**>(&EndSceneOriginal)))
-		throw std::runtime_error("Minhook Initialization failed. Unable to hook EndScene()");
+	//if (MH_CreateHook(VFunc(GUI::device, 42), &EndScene, reinterpret_cast<void**>(&EndSceneOriginal)))
+		//throw std::runtime_error("Minhook Initialization failed. Unable to hook EndScene()");
 
 	if (MH_CreateHook(VFunc(GUI::device, 16), &Reset, reinterpret_cast<void**>(&ResetOriginal)))
 		throw std::runtime_error("Minhook Initialization failed unable to hook Reset()");
@@ -25,6 +25,9 @@ void Hooking::Init()
 	if (MH_CreateHook(VFunc(Hooking::lpDInput, 9), &GetDeviceState, reinterpret_cast<void**>(&GetDeviceStateOriginal)))
 		throw std::runtime_error("Minhook Initialization failed. Unable to hook GetDeviceState().");
 
+	if (MH_CreateHook(VFunc(GUI::device, 17), &HookedPresent, reinterpret_cast<void**>(&PresentOriginal))) {
+		throw std::runtime_error("Minhook Initialization failed. Unable to hook Present().");
+	}
 	
 
 	if (MH_EnableHook(MH_ALL_HOOKS))
@@ -73,6 +76,19 @@ long __stdcall Hooking::EndScene(IDirect3DDevice9* device) noexcept
 	return result;
 }
 
+HRESULT __stdcall Hooking::HookedPresent(IDirect3DDevice9* device, CONST RECT* pSourceRect, CONST RECT* pDestRect, HWND hDestWindowOverride, CONST RGNDATA* pDirtyRegion) {
+	if (!GUI::isInitialized) {
+		GUI::InitMenu(device);
+	}
+
+	if (GUI::showMenu && GUI::isInitialized) {
+		GUI::Draw();
+	}
+
+	// Call the original Present function
+	return PresentOriginal(device, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
+}
+
 HRESULT __stdcall Hooking::Reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params) noexcept
 {
 	ImGui_ImplDX9_InvalidateDeviceObjects();
@@ -80,6 +96,7 @@ HRESULT __stdcall Hooking::Reset(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS
 	ImGui_ImplDX9_CreateDeviceObjects();
 	return result;
 }
+
 
 HRESULT __stdcall Hooking::GetDeviceData(IDirectInputDevice8* pThis, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags)
 {

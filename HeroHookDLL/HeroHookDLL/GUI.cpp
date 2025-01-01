@@ -12,10 +12,10 @@
 #include "DebugEnabler.cpp"
 #include "CoordinateWindow.cpp"
 #include "CoordinateManipulator.hpp"
+#include "FileUtilities.hpp"
 
 static Console console;
 static DebugEnabler debugger;
-static CoordinateDisplay coords;
 Coordinates sharedCoordinates;
 GUI::CoordinateManipulator manipulator;
 
@@ -137,7 +137,11 @@ void GUI::Initialize()
 
 void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 {
+	//Initialization
 	manipulator = CoordinateManipulator(400, 200, "Coordinate Manipulator", false, &sharedCoordinates);
+	manipulator.SetPositionCodes(readPositionCodesFromFile());
+
+
 	auto params = D3DDEVICE_CREATION_PARAMETERS{  };
 	device->GetCreationParameters(&params);
 
@@ -156,6 +160,7 @@ void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 	ImGuiIO& io = ImGui::GetIO();
 	GUI::font = io.Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 30);
 }
+
 void GUI::Destroy() noexcept
 {
 	ImGui_ImplDX9_Shutdown();
@@ -168,10 +173,9 @@ void GUI::Destroy() noexcept
 void GUI::LogToConsole(const char* input) noexcept {
 	console.AddLog(input);
 }
-//Draws/Renders the menu
+
 void GUI::Draw() noexcept
 {
-
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -179,9 +183,9 @@ void GUI::Draw() noexcept
 
 	io.MouseDrawCursor = true;
 
-
 	ImGui::PushFont(GUI::font);
-	ImGui::BeginMainMenuBar();
+	ImGui::BeginMainMenuBar();  // This begins the menu bar, and it should only have one corresponding End call.
+
 	if (ImGui::BeginMenu("Windows"))
 	{
 		if (ImGui::MenuItem("Console"))
@@ -194,8 +198,10 @@ void GUI::Draw() noexcept
 
 		ImGui::EndMenu();
 	}
-	ImGui::EndMainMenuBar();
 
+	ImGui::EndMainMenuBar();  // Correct placement of EndMainMenuBar
+
+	// Drawing individual windows
 	if (GUI::showConsole)
 		console.Draw("HeroHookDLL Console", &GUI::showConsole);
 
@@ -206,21 +212,9 @@ void GUI::Draw() noexcept
 	{
 		getCoordinates(sharedCoordinates);
 		manipulator.Draw();
-
 	}
-	ImGui::EndMainMenuBar();
 
-	if (GUI::showConsole)
-		console.Draw("HeroHookDLL Console", &GUI::showConsole);
-
-	if (GUI::showDebugEnabler)
-		debugger.Draw("Debug Enabler", &GUI::showDebugEnabler);
 	ImGui::PopFont();
-
-	//ImGui::End();
-
-
-
 
 	ImGui::EndFrame();
 	ImGui::Render();

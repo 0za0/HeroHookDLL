@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d9.h>
 #include "../imGUI/imgui.h"
+#define NOMINMAX
 
 
 namespace GUI
@@ -8,10 +9,6 @@ namespace GUI
 
 	//GUI Stuff
 	inline ImFont* font;
-
-	inline bool showConsole = false;
-	inline bool showDebugEnabler = false;
-
 
 	inline bool showMenu = true;
 

@@ -1,4 +1,5 @@
 // ME1 - binkw32 - main.cpp
+#define NOMINMAX
 #include "header.h"
 #include <windows.h>
 #include <stdio.h>
