@@ -1,8 +1,10 @@
 #pragma once
 #include "GUI.h"
-#include <dinput.h>
 
+#ifndef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION 0x0800
+#endif
+#include <dinput.h>
 #pragma comment (lib,"Dinput8.lib")
 #pragma comment (lib,"Dxguid.lib")
 

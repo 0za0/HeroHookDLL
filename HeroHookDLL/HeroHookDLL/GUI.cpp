@@ -1,3 +1,5 @@
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <stdexcept>
 
 #include "GUI.h"
@@ -13,6 +15,7 @@
 #include "CoordinateWindow.cpp"
 #include "CoordinateManipulator.hpp"
 #include "FileUtilities.hpp"
+#include "Multiplayer.h"
 
 static Console console;
 static DebugEnabler debugger;
@@ -152,12 +155,14 @@ void GUI::InitMenu(LPDIRECT3DDEVICE9 device) noexcept
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
 	ImGui_ImplWin32_Init(window);
 	ImGui_ImplDX9_Init(device);
 
 	isInitialized = true;
 
-	ImGuiIO& io = ImGui::GetIO();
 	GUI::font = io.Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 30);
 }
 
@@ -196,6 +201,9 @@ void GUI::Draw() noexcept
 		if (ImGui::MenuItem("Coordinate Display"))
 			manipulator.show = !manipulator.show;
 
+		if (ImGui::MenuItem("Multiplayer"))
+			Multiplayer::showWindow = !Multiplayer::showWindow;
+
 		ImGui::EndMenu();
 	}
 
@@ -214,6 +222,8 @@ void GUI::Draw() noexcept
 		manipulator.Draw();
 	}
 
+	Multiplayer::DrawUI();
+
 	ImGui::PopFont();
 
 	ImGui::EndFrame();
@@ -225,10 +235,24 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	if (GetAsyncKeyState(VK_F12) & 1)
 		GUI::showMenu = !GUI::showMenu;
-	//Pass to imGUI
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam) && GUI::showMenu)
-	{
-		return 1L;
+
+	if (GUI::showMenu && GUI::isInitialized) {
+		// Mouse input is handled entirely via DirectInput hook (Hooking.cpp GetDeviceState).
+		// Block Win32 mouse messages from ImGui to prevent conflict — the game calls
+		// SetCursorPos to center the cursor each frame, which generates WM_MOUSEMOVE
+		// at the center position, fighting with our accumulated DInput cursor position.
+		bool isMouse = (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST) || msg == WM_SETCURSOR;
+
+		if (!isMouse) {
+			// Pass keyboard and other messages to ImGui (needed for text input, etc.)
+			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+				return 1L;
+		}
+
+		// Eat mouse messages entirely — don't forward to game either
+		if (isMouse)
+			return 1L;
 	}
+
 	return CallWindowProc(GUI::originalWindowProc, hWnd, msg, wParam, lParam);
 }

@@ -1,9 +1,16 @@
 // ME1 - binkw32 - main.cpp
 #define NOMINMAX
 #include "header.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <stdio.h>
 #include <ShlObj.h>
+#include <DbgHelp.h>
+#include <Psapi.h>
+#pragma comment(lib, "dbghelp.lib")
+#pragma comment(lib, "psapi.lib")
+#pragma comment(linker, "/NODEFAULTLIB:libcmtd.lib")
 
 // dllmain.cpp : Defines the entry point for the DLL application.
 #define BASE_ADDR 0x400000
@@ -14,6 +21,7 @@
 
 #include "Hooking.h"
 #include "GameManip.h"
+#include "Multiplayer.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -133,6 +141,143 @@ void OpenLogFile()
 	fopen_s(&Log, "dllhook.log", "w");
 }
 
+static const char* ExceptionCodeToString(DWORD code)
+{
+	switch (code) {
+	case EXCEPTION_ACCESS_VIOLATION:       return "ACCESS_VIOLATION";
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:  return "ARRAY_BOUNDS_EXCEEDED";
+	case EXCEPTION_BREAKPOINT:             return "BREAKPOINT";
+	case EXCEPTION_DATATYPE_MISALIGNMENT:  return "DATATYPE_MISALIGNMENT";
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:     return "FLT_DIVIDE_BY_ZERO";
+	case EXCEPTION_FLT_OVERFLOW:           return "FLT_OVERFLOW";
+	case EXCEPTION_ILLEGAL_INSTRUCTION:    return "ILLEGAL_INSTRUCTION";
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:     return "INT_DIVIDE_BY_ZERO";
+	case EXCEPTION_INT_OVERFLOW:           return "INT_OVERFLOW";
+	case EXCEPTION_PRIV_INSTRUCTION:       return "PRIV_INSTRUCTION";
+	case EXCEPTION_STACK_OVERFLOW:         return "STACK_OVERFLOW";
+	default:                               return "UNKNOWN";
+	}
+}
+
+LONG CALLBACK CrashHandler(EXCEPTION_POINTERS* ep)
+{
+	// Only log fatal exceptions, not benign first-chance ones
+	DWORD code = ep->ExceptionRecord->ExceptionCode;
+	if (code != EXCEPTION_ACCESS_VIOLATION &&
+		code != EXCEPTION_STACK_OVERFLOW &&
+		code != EXCEPTION_ILLEGAL_INSTRUCTION &&
+		code != EXCEPTION_INT_DIVIDE_BY_ZERO &&
+		code != EXCEPTION_PRIV_INSTRUCTION &&
+		code != EXCEPTION_ARRAY_BOUNDS_EXCEEDED &&
+		code != EXCEPTION_FLT_DIVIDE_BY_ZERO)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+	// Only log once (avoid re-entry)
+	static volatile LONG logged = 0;
+	if (InterlockedCompareExchange(&logged, 1, 0) != 0)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+	char path[MAX_PATH];
+	GetModuleFileNameA(NULL, path, MAX_PATH);
+	char* lastSlash = strrchr(path, '\\');
+	if (lastSlash) strcpy_s(lastSlash + 1, MAX_PATH - (lastSlash + 1 - path), "crashlog.txt");
+	else strcpy_s(path, "crashlog.txt");
+
+	FILE* f = nullptr;
+	fopen_s(&f, path, "w");
+	if (!f) return EXCEPTION_CONTINUE_SEARCH;
+
+	EXCEPTION_RECORD* er = ep->ExceptionRecord;
+	CONTEXT* ctx = ep->ContextRecord;
+
+	fprintf(f, "=== BIONICLE HEROES CRASH LOG ===\n\n");
+	fprintf(f, "Exception: 0x%08X (%s)\n", er->ExceptionCode, ExceptionCodeToString(er->ExceptionCode));
+	fprintf(f, "Address:   0x%08X\n", (DWORD)(DWORD_PTR)er->ExceptionAddress);
+
+	if (er->ExceptionCode == EXCEPTION_ACCESS_VIOLATION && er->NumberParameters >= 2) {
+		fprintf(f, "  %s address 0x%08X\n",
+			er->ExceptionInformation[0] == 0 ? "Reading from" :
+			er->ExceptionInformation[0] == 1 ? "Writing to" : "DEP at",
+			(DWORD)er->ExceptionInformation[1]);
+	}
+
+	fprintf(f, "\n--- Registers ---\n");
+	fprintf(f, "EAX=%08X  EBX=%08X  ECX=%08X  EDX=%08X\n", ctx->Eax, ctx->Ebx, ctx->Ecx, ctx->Edx);
+	fprintf(f, "ESI=%08X  EDI=%08X  ESP=%08X  EBP=%08X\n", ctx->Esi, ctx->Edi, ctx->Esp, ctx->Ebp);
+	fprintf(f, "EIP=%08X  EFLAGS=%08X\n", ctx->Eip, ctx->EFlags);
+
+	fprintf(f, "\n--- Call Stack ---\n");
+	HANDLE process = GetCurrentProcess();
+	HANDLE thread = GetCurrentThread();
+	SymInitialize(process, NULL, TRUE);
+
+	STACKFRAME frame = {};
+	frame.AddrPC.Offset = ctx->Eip;
+	frame.AddrPC.Mode = AddrModeFlat;
+	frame.AddrFrame.Offset = ctx->Ebp;
+	frame.AddrFrame.Mode = AddrModeFlat;
+	frame.AddrStack.Offset = ctx->Esp;
+	frame.AddrStack.Mode = AddrModeFlat;
+
+	for (int i = 0; i < 64; i++) {
+		if (!StackWalk(IMAGE_FILE_MACHINE_I386, process, thread, &frame, ctx,
+			NULL, SymFunctionTableAccess, SymGetModuleBase, NULL))
+			break;
+		if (frame.AddrPC.Offset == 0) break;
+
+		DWORD moduleBase = SymGetModuleBase(process, frame.AddrPC.Offset);
+		char moduleName[MAX_PATH] = "???";
+		if (moduleBase) {
+			GetModuleFileNameA((HMODULE)(DWORD_PTR)moduleBase, moduleName, MAX_PATH);
+			char* name = strrchr(moduleName, '\\');
+			if (name) memmove(moduleName, name + 1, strlen(name + 1) + 1);
+		}
+
+		fprintf(f, "  [%2d] 0x%08X  %s+0x%X\n", i,
+			(DWORD)frame.AddrPC.Offset, moduleName,
+			(DWORD)(frame.AddrPC.Offset - moduleBase));
+	}
+	SymCleanup(process);
+
+	fprintf(f, "\n--- Stack Dump (ESP) ---\n");
+	DWORD esp = ctx->Esp;
+	for (int row = 0; row < 16; row++) {
+		DWORD addr = esp + row * 16;
+		fprintf(f, "%08X: ", addr);
+		for (int col = 0; col < 16; col += 4) {
+			DWORD val = 0;
+			if (IsBadReadPtr((void*)(DWORD_PTR)(addr + col), 4) == 0)
+				val = *(DWORD*)(DWORD_PTR)(addr + col);
+			fprintf(f, "%08X ", val);
+		}
+		fprintf(f, "\n");
+	}
+
+	fprintf(f, "\n--- Loaded Modules ---\n");
+	HMODULE modules[256];
+	DWORD needed;
+	if (EnumProcessModules(process, modules, sizeof(modules), &needed)) {
+		int count = needed / sizeof(HMODULE);
+		for (int i = 0; i < count && i < 256; i++) {
+			char name[MAX_PATH];
+			GetModuleFileNameA(modules[i], name, MAX_PATH);
+			MODULEINFO mi = {};
+			GetModuleInformation(process, modules[i], &mi, sizeof(mi));
+			fprintf(f, "  0x%08X - 0x%08X  %s\n",
+				(DWORD)(DWORD_PTR)mi.lpBaseOfDll, (DWORD)((DWORD_PTR)mi.lpBaseOfDll + mi.SizeOfImage), name);
+		}
+	}
+
+	fclose(f);
+
+	char msg[512];
+	sprintf_s(msg, "Game crashed at 0x%08X (%s)\nCrash log saved to:\n%s",
+		(DWORD)(DWORD_PTR)er->ExceptionAddress, ExceptionCodeToString(er->ExceptionCode), path);
+	MessageBoxA(NULL, msg, "Bionicle Heroes - Crash", MB_OK | MB_ICONERROR);
+
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
 HMODULE newhModule;
 DWORD __stdcall DestroyConsole(LPVOID lpParameter) {
 	Sleep(100);
@@ -158,11 +303,13 @@ DWORD WINAPI MainMenu(LPVOID lpParam)
 			fclose(Log);
 
 		GUI::Initialize();
+		Multiplayer::Init();
 		Hooking::Init();
 	}
 	catch (const std::exception& error) {
 		MessageBeep(MB_ICONERROR);
 		MessageBox(0, error.what(), "DLL Hook Error", MB_OK | MB_ICONEXCLAMATION);
+		Multiplayer::Shutdown();
 		Hooking::Destroy();
 		GUI::Destroy();
 	}
@@ -770,7 +917,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
 	{
-
+		AddVectoredExceptionHandler(1, CrashHandler);
 		Hooking::InitInputHook(hModule);
 		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)MainMenu, hModule, 0, nullptr);
 	}

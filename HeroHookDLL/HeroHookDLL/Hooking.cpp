@@ -1,4 +1,7 @@
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include "Hooking.h"
+#include "Multiplayer.h"
 #include <stdexcept>
 #include <intrin.h>
 #include "../include/MinHook.h"
@@ -81,6 +84,10 @@ HRESULT __stdcall Hooking::HookedPresent(IDirect3DDevice9* device, CONST RECT* p
 		GUI::InitMenu(device);
 	}
 
+	// Update multiplayer: read position, send/recv network, draw remote cube
+	// This must happen BEFORE ImGui so the cube is behind the overlay
+	Multiplayer::Update(device);
+
 	if (GUI::showMenu && GUI::isInitialized) {
 		GUI::Draw();
 	}
@@ -115,32 +122,62 @@ HRESULT __stdcall Hooking::GetDeviceData(IDirectInputDevice8* pThis, DWORD cbObj
 
 	return result;
 }
+// Track cursor position by accumulating DirectInput deltas.
+// GetCursorPos doesn't work reliably because the game calls SetCursorPos
+// to center the cursor each frame (standard FPS mouse-look technique).
+static float s_cursorX = -1.0f, s_cursorY = -1.0f;
+static bool  s_cursorSeeded = false;
+
 HRESULT __stdcall Hooking::GetDeviceState(IDirectInputDevice8* pThis, DWORD cbData, LPVOID lpvData)
 {
 	HRESULT result = GetDeviceStateOriginal(pThis, cbData, lpvData);
 
-	if (result == DI_OK) {
-		if (GUI::showMenu && GUI::isInitialized) {
-			((LPDIMOUSESTATE2)lpvData)->rgbButtons[0] = 0;
-			((LPDIMOUSESTATE2)lpvData)->rgbButtons[1] = 0;
-			((LPDIMOUSESTATE2)lpvData)->lZ = 0;
+	if (result == DI_OK && cbData >= sizeof(DIMOUSESTATE) && GUI::isInitialized) {
+		DIMOUSESTATE* ms = (DIMOUSESTATE*)lpvData;
 
-			//Why I'm using this instead of the lpvData
-			//The lpvData was shit and didnt work well, this works 100% better
-			if (GetAsyncKeyState(VK_LBUTTON))
-				ImGui::GetIO().AddMouseButtonEvent(0, true);
-			else
-				ImGui::GetIO().AddMouseButtonEvent(0, false);
+		if (GUI::showMenu) {
+			// Seed cursor at window center when menu first opens
+			if (!s_cursorSeeded && GUI::window) {
+				RECT rc;
+				GetClientRect(GUI::window, &rc);
+				s_cursorX = (float)(rc.right) / 2.0f;
+				s_cursorY = (float)(rc.bottom) / 2.0f;
+				s_cursorSeeded = true;
+			}
 
-			if (GetAsyncKeyState(VK_RBUTTON))
-				ImGui::GetIO().AddMouseButtonEvent(1, true);
-			else
-				ImGui::GetIO().AddMouseButtonEvent(1, false);
+			// Accumulate DirectInput deltas into our tracked cursor position
+			s_cursorX += (float)ms->lX;
+			s_cursorY += (float)ms->lY;
 
-			ImGui::GetIO().AddMousePosEvent(((LPDIMOUSESTATE2)lpvData)->lX, ((LPDIMOUSESTATE2)lpvData)->lY);
+			// Clamp to window client area
+			if (GUI::window) {
+				RECT rc;
+				GetClientRect(GUI::window, &rc);
+				if (s_cursorX < 0.0f) s_cursorX = 0.0f;
+				if (s_cursorY < 0.0f) s_cursorY = 0.0f;
+				if (s_cursorX > (float)rc.right) s_cursorX = (float)rc.right;
+				if (s_cursorY > (float)rc.bottom) s_cursorY = (float)rc.bottom;
+			}
+
+			// Feed scroll wheel before zeroing
+			if (ms->lZ != 0)
+				ImGui::GetIO().AddMouseWheelEvent(0.0f, (float)ms->lZ / 120.0f);
+
+			// Suppress ALL game mouse input: axes, buttons, scroll
+			memset(lpvData, 0, cbData);
+
+			// Feed our tracked cursor position to ImGui
+			ImGui::GetIO().AddMousePosEvent(s_cursorX, s_cursorY);
+
+			// Feed mouse buttons via Win32 API
+			ImGui::GetIO().AddMouseButtonEvent(0, (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0);
+			ImGui::GetIO().AddMouseButtonEvent(1, (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0);
+			ImGui::GetIO().AddMouseButtonEvent(2, (GetAsyncKeyState(VK_MBUTTON) & 0x8000) != 0);
+		} else {
+			// Menu hidden — reset cursor seed so it re-centers when menu reopens
+			s_cursorSeeded = false;
 		}
 	}
-
 
 	return result;
 }

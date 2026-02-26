@@ -317,12 +317,14 @@ static void ImGui_ImplWin32_UpdateMouseData(ImGuiIO& io)
 
         // (Optional) Fallback to provide mouse position when focused (WM_MOUSEMOVE already provides this when hovered or captured)
         // This also fills a short gap when clicking non-client area: WM_NCMOUSELEAVE -> modal OS move -> gap -> WM_NCMOUSEMOVE
-        if (!io.WantSetMousePos && bd->MouseTrackedArea == 0)
-        {
-            POINT pos;
-            if (::GetCursorPos(&pos) && ::ScreenToClient(bd->hWnd, &pos))
-                io.AddMousePosEvent((float)pos.x, (float)pos.y);
-        }
+        // PATCHED: Disabled — the host game calls SetCursorPos each frame for mouse-look,
+        // so GetCursorPos returns the wrong position. Mouse is fed via DirectInput hook instead.
+        //if (!io.WantSetMousePos && bd->MouseTrackedArea == 0)
+        //{
+        //    POINT pos;
+        //    if (::GetCursorPos(&pos) && ::ScreenToClient(bd->hWnd, &pos))
+        //        io.AddMousePosEvent((float)pos.x, (float)pos.y);
+        //}
     }
 }
 
